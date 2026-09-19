@@ -40,6 +40,17 @@ def init_db() -> None:
         """)
         conn.commit()
 
+        # Seed inicial: Se o banco na nuvem for recém-criado, garante a conta de teste
+        cursor = conn.execute("SELECT COUNT(*) as total FROM alunos")
+        if cursor.fetchone()["total"] == 0:
+            hoje = datetime.date.today()
+            exp_4anos = hoje + datetime.timedelta(days=1460)
+            conn.execute("""
+                INSERT INTO alunos (nome, email, senha_hash, turma, data_curso, status, data_expiracao, perfis_aprovados, data_aprovacao)
+                VALUES ('Aluno Teste Pós-Curso', 'aluno.teste@isak.com', ?, 'Turma N1 - 2026', ?, 'acreditado', ?, 1, ?)
+            """, (hash_password("senha123"), hoje.isoformat(), exp_4anos.isoformat(), hoje.isoformat()))
+            conn.commit()
+
 def cadastrar_aluno(nome: str, email: str, senha: str, turma: str, data_curso: datetime.date) -> Tuple[bool, str]:
     email_clean = email.strip().lower()
     # Regra 1: Data do curso + 4 meses (120 dias)
