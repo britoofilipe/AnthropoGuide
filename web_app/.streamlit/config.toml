@@ -1,0 +1,17 @@
+# Tema visual da marca FilipeBrito (BC_MARCA_FILIPEBRITO.md, seções 9 e 10)
+# Turquesa como cor principal, cinza oficial no texto, Montserrat (alternativa à Gotham) nos títulos e Inter no corpo.
+
+[theme]
+base = "light"
+primaryColor = "#01978F"
+backgroundColor = "#FFFFFF"
+secondaryBackgroundColor = "#F2F7F5"
+textColor = "#5C5B5F"
+linkColor = "#01978F"
+borderColor = "#DCE5E1"
+baseRadius = "0.6rem"
+font = "Inter:https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+headingFont = "Montserrat:https://fonts.googleapis.com/css2?family=Montserrat:wght@300;600;700;800&display=swap"
+
+[theme.sidebar]
+backgroundColor = "#F2F7F5"

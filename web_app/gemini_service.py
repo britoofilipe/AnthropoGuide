@@ -55,12 +55,12 @@ class AnthropoGuideBot:
     def send_message(self, message: str) -> str:
         if not self.api_key:
             return (
-                "⚠️ **Chave de API do Gemini não configurada!**\n\n"
+                "**Chave de API do Gemini não configurada!**\n\n"
                 "Por favor, configure a variável `GEMINI_API_KEY` no arquivo `.env` ou insira a chave no painel administrativo."
             )
         if not self.chat:
             return (
-                "⚠️ **Erro na inicialização da IA.**\n\n"
+                "**Erro na inicialização da IA.**\n\n"
                 "Verifique se o pacote `google-genai` está instalado e se sua chave é válida."
             )
             
@@ -68,4 +68,4 @@ class AnthropoGuideBot:
             response = self.chat.send_message(message)
             return response.text
         except Exception as e:
-            return f"❌ Erro na comunicação com a IA: {str(e)}"
+            return f"Erro na comunicação com a IA: {str(e)}"
