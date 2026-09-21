@@ -16,9 +16,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SYSTEM_PROMPT_PATH = BASE_DIR / "SYSTEM_PROMPT_ANTHROPOGUIDE.md"
 KNOWLEDGE_BASE_DIR = BASE_DIR / "knowledge_base"
 
-# Lista de modelos por ordem de estabilidade e capacidade comprovada
-PRIMARY_MODEL = "gemini-flash-latest"
-FALLBACK_MODELS = ["gemini-3.5-flash", "gemini-3.7-flash", "gemini-3.1-flash-lite", "gemini-3.6-flash"]
+# Lista de modelos por ordem de velocidade, estabilidade e capacidade comprovada
+PRIMARY_MODEL = "gemini-flash-lite-latest"
+FALLBACK_MODELS = ["gemini-3.1-flash-lite", "gemini-3.5-flash", "gemini-flash-latest"]
 
 def load_system_context() -> str:
     """Carrega o System Prompt v2.4 e concatena os 8 módulos da Base de Conhecimento."""
@@ -62,46 +62,58 @@ class AnthropoGuideBot:
             except Exception as e:
                 print(f"[AnthropoGuide] Erro ao inicializar cliente Gemini ({model_name}): {e}")
 
-    def send_message(self, message: str) -> str:
+    def send_message_stream(self, message: str):
+        """
+        Gera a resposta em fluxo contínuo (streaming) para exibição em tempo real (efeito typewriter).
+        Possui fallback automático para modelos secundários em caso de instabilidade da API.
+        """
         if not self.api_key:
-            return (
+            yield (
                 "Chave de API do Gemini não configurada!\n\n"
                 "Por favor, configure a variável `GEMINI_API_KEY` no arquivo `.env` ou insira a chave no painel administrativo."
             )
+            return
+
         if not self.client or not self.chat:
             self._init_client(self.current_model)
             if not self.client:
-                return "Erro na inicialização da IA. Verifique se o pacote `google-genai` está instalado e se sua chave é válida."
+                yield "Erro na inicialização da IA. Verifique se o pacote `google-genai` está instalado e se sua chave é válida."
+                return
 
-        # Lista ordenada de modelos para tentar (começando pelo atual e depois os alternativos)
         modelos_para_tentar = [self.current_model] + [m for m in FALLBACK_MODELS if m != self.current_model]
-        
+
         for modelo in modelos_para_tentar:
-            # Se precisou trocar de modelo devido a instabilidade anterior, reinicializa o chat
             if modelo != self.current_model:
                 self._init_client(modelo)
 
-            for tentativa in range(3):
+            for tentativa in range(2):
                 try:
-                    response = self.chat.send_message(message)
-                    if response and response.text:
+                    response_stream = self.chat.send_message_stream(message)
+                    chunk_produzido = False
+                    for chunk in response_stream:
+                        if chunk and chunk.text:
+                            chunk_produzido = True
+                            yield chunk.text
+                    if chunk_produzido:
                         self.current_model = modelo
-                        return response.text
+                        return
                 except Exception as e:
                     erro_str = str(e).lower()
-                    # Se for erro 503 (serviço sobrecarregado momentaneamente) ou 429 (rate limit temporário)
+                    # Se erro de sobrecarga temporária da API
                     if "503" in erro_str or "unavailable" in erro_str or "high demand" in erro_str or "429" in erro_str:
-                        # Aguarda breve pausa e retenta
-                        time.sleep(1.2 * (tentativa + 1))
+                        time.sleep(0.5)
                         continue
                     elif "404" in erro_str or "not found" in erro_str:
-                        # Modelo indisponível, pula para o próximo da lista de fallback
                         break
                     else:
-                        # Erro genérico
-                        return f"Erro na comunicação com a IA: {str(e)}"
+                        yield f"Erro na comunicação com a IA: {str(e)}"
+                        return
 
-        return (
+        yield (
             "Os servidores do Google estão temporariamente com alta demanda. "
             "Por favor, tente reenviar sua pergunta em alguns instantes."
         )
+
+    def send_message(self, message: str) -> str:
+        """Mantido para compatibilidade síncrona; consome o stream completo."""
+        return "".join(list(self.send_message_stream(message)))

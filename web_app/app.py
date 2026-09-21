@@ -61,10 +61,8 @@ def render_chat(placeholder: str, key: str) -> None:
             st.markdown(prompt)
 
         with st.chat_message("assistant", avatar=avatar("assistant")):
-            with st.spinner("Consultando protocolo e evidências..."):
-                resposta = st.session_state.bot.send_message(prompt)
-                st.markdown(resposta)
-                st.session_state.messages.append({"role": "assistant", "content": resposta})
+            resposta = st.write_stream(st.session_state.bot.send_message_stream(prompt))
+            st.session_state.messages.append({"role": "assistant", "content": resposta})
 
 
 def botao_sair() -> None:
