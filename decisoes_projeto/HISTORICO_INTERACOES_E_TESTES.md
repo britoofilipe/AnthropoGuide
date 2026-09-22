@@ -43,3 +43,17 @@
 1. **Instituição da v2.0 do System Prompt:** Adoção da Pirâmide Invertida e eliminação da repetição automática de cabeçalhos.
 2. **Atualização do Módulo 05 da Knowledge Base:** Inclusão das tabelas completas de $\sum 8SKF$ e $\sum 6SKF$ de Campa et al. (2025) e parametrização das faixas de Frisancho (1990/2008).
 3. **Plausibilidade Biológica:** Instrução para que o modelo alerte o aluno caso uma fórmula gere estimativas incompatíveis com a magreza evidente do somatório de dobras.
+
+---
+
+## 3. Teste em Fase Beta — Perímetro Máximo da Perna (22/09/2026)
+
+- **Cenário:** Interação de um aluno beta tester questionando a técnica de mensuração do perímetro da perna.
+- **Desvio Detectado:** O tutor sugeriu erroneamente que a medida poderia ser realizada com o avaliado apoiando o pé sobre o banco antropométrico, com a perna e coxa flexionadas a 90°.
+- **Intervenção do Prof. Filipe Brito (Instrutor ISAK Nível 3):**
+  - Esclareceu que a técnica original ISAK preconizada exige o avaliado em pé, ereto, peso distribuído igualmente entre ambas as pernas, e o avaliador posicionado **DE FRENTE para a perna direita** com os olhos no nível da fita.
+  - Apoiando o pé no banco a 90° ou sentado é estritamente uma **adaptação clínica de exceção** (para quem não consegue ficar em pé) e exige **registro obrigatório na ficha**.
+- **Ação Implementada:**
+  - Atualização do `knowledge_base/01_escopo_e_protocolo_isak.md` (seção 4.2.2 dedicada e alerta em destaque).
+  - Atualização do `SYSTEM_PROMPT_ANTHROPOGUIDE.md` para a versão 2.5 com blindagem técnica negativa e positiva.
+  - Publicação da ADR 007.

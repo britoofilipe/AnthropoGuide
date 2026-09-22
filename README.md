@@ -9,7 +9,7 @@ Este repositório contém a documentação completa, instruções calibradas do 
 ```
 d:\ISAK_Filipe_Instrutor\AnthropoGuide\
 ├── PROJETO_ANTHROPOGUIDE_HANDOFF.md    # Diretrizes originais e handoff
-├── SYSTEM_PROMPT_ANTHROPOGUIDE.md       # [VIGENTE v2.4] Instruções calibradas e blindadas
+├── SYSTEM_PROMPT_ANTHROPOGUIDE.md       # [VIGENTE v2.5] Instruções calibradas, blindadas e refinadas
 ├── README.md                            # Guia de implantação e índice
 ├── decisoes_projeto/                    # Registros de decisões arquiteturais e pedagógicas
 │   ├── ADR_001_arquitetura_modular_knowledge_base.md
@@ -18,6 +18,7 @@ d:\ISAK_Filipe_Instrutor\AnthropoGuide\
 │   ├── ADR_004_comparativo_campa_vs_costa_e_nomenclatura_perna.md
 │   ├── ADR_005_incorporacao_tutoriais_isakmetry.md # Tutoriais oficiais YouTube @isakglobal410
 │   ├── ADR_006_blindagem_propriedade_intelectual.md # Proteção anti-vazamento de prompt/arquivos
+│   ├── ADR_007_tecnica_perimetro_perna_e_posicionamento_avaliador.md # Perímetro da perna vs. adaptação clínica
 │   └── HISTORICO_INTERACOES_E_TESTES.md # Testes reais e análises de desempenho
 ├── versions/                            # Histórico e versionamento de System Prompts
 │   ├── system_prompt_v1_0_rigido.md     # Versão inicial com template rígido de 7 passos
@@ -25,7 +26,8 @@ d:\ISAK_Filipe_Instrutor\AnthropoGuide\
 │   ├── system_prompt_v2_1_petroski_mulheres.md # Versão com Petroski feminino 4 dobras
 │   ├── system_prompt_v2_2_calibrado.md  # Versão com Perna e Campa vs. Costa
 │   ├── system_prompt_v2_3_isakmetry_tutoriais.md # Versão com ISAKMetry & 20 sujeitos pós-curso
-│   └── system_prompt_v2_4_blindagem_ip.md # Versão vigente (Blindagem de IP & Anti-Leaking)
+│   ├── system_prompt_v2_4_blindagem_ip.md # Versão com blindagem de propriedade intelectual
+│   └── system_prompt_v2_5_perimetro_perna.md # Versão vigente (Técnica do Perímetro da Perna)
 └── knowledge_base/                      # Base de conhecimento modular do Gem (8 módulos)
     ├── 01_escopo_e_protocolo_isak.md    # Medidas N1, regras do lado direito e técnica
     ├── 02_qualidade_da_medida.md        # ETM intra/inter, troika e Guia Oficial ISAKMetry pós-curso

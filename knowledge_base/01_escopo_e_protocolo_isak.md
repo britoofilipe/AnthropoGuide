@@ -108,11 +108,35 @@ A correta identificação dos pontos ósseos é a etapa que mais contribui para 
   - **Tempo de leitura:** Soltar a alavanca do plicômetro completamente e ler a medida após **2 segundos**, permitindo o assentamento tecidual sem compressão extrema sustentada.
 
 ### 4.2 Perímetros / Circunferências (Girths)
+
+#### 4.2.1 Princípios Gerais
 - **Instrumento:** Fita métrica metálica flexível (aço inoxidável), estreita (~6 mm), não elástica, com mola sem resistência excessiva e com espaço em branco inicial (*blank end*) de 8 a 10 cm.
 - **Técnica de Cruzamento (*Cross-hand technique*):**
   - O estojo da fita é segurado na mão direita; a ponta solta na mão esquerda.
   - A fita passa ao redor do segmento, cruza-se a fita mantendo-a plana e alinhada ao plano horizontal pretendido.
-  - A leitura é feita exatamente no zero da fita, sem compressão dos tecidos moles (a fita deve repousar sobre a pele sem deprimi-la).
+  - A leitura é feita exatamente no zero da fita, sem compressão dos tecidos moles (a fita deve repousar sobre a pele sem deprimi-la nem deixar folga).
+  - O antropometrista deve manter os olhos no mesmo nível horizontal da fita para anular o **erro de paralaxe**.
+
+#### 4.2.2 Perímetro Máximo da Perna (*Calf Maximum Girth*)
+- **Posição do Avaliado (Técnica Preconizada Original):**
+  - Sujeito em pé, postura ereta, com o peso corporal distribuído **rigorosamente igual entre ambas as pernas**.
+  - Pés paralelos e ligeiramente afastados (cerca de 5 a 10 cm).
+  - O avaliado pode se posicionar de pé sobre a caixa antropométrica (com ambos os pés apoiados uniformemente) para elevar a perna e favorecer a ergonomia do avaliador.
+- **Posicionamento do Avaliador:**
+  - O avaliador posiciona-se sentado ou agachado **DE FRENTE para a perna direita do avaliado**.
+  - Os olhos do avaliador devem estar rigorosamente no mesmo nível da fita métrica.
+- **Manobra de Execução:**
+  - O avaliador circunda a perna com a fita métrica usando a técnica de cruzamento de mãos (*cross-hand technique*).
+  - Realiza-se uma manobra de varredura (*sliding search*), movendo a fita cuidadosamente para cima e para baixo em sucessivos planos estritamente horizontais, até identificar e confirmar o perímetro de valor máximo absoluto.
+  - A leitura é registrada em centímetros com precisão de 0,1 cm ($1\text{ mm}$).
+- **Relação com o Ponto da Dobra da Perna (*Calf landmark*):**
+  - No exato nível da circunferência máxima identificada, projeta-se uma linha horizontal na face medial da perna. O cruzamento com a linha vertical medial mais proeminente define o sítio oficial da dobra da perna.
+
+> [!IMPORTANT]
+> **ALERTA METODOLÓGICO: TÉCNICA PRECONIZADA VS. ADAPTAÇÃO CLÍNICA**  
+> 1. **Não é a técnica preconizada:** Orientar o sujeito a apoiar o pé sobre o banco antropométrico/cadeira com a perna e coxa flexionadas a 90°, ou realizar a aferição com o paciente sentado, **NÃO É A TÉCNICA ORIGINAL PRECONIZADA PELA ISAK**. Essa postura altera a conformação do ventre muscular e a tensão tecidual.  
+> 2. **Adaptação de Exceção:** Apenas na impossibilidade física real de o paciente manter a posição ortostática adequada (ex.: dor aguda, fraqueza severa, vertigem, lesão ortopédica ou incapacidade motora), admite-se a realização da medida adaptada (sentado ou com perna/coxa a 90°).  
+> 3. **Registro Obrigatório:** Quando qualquer adaptação for necessária por motivo de força maior, o antropometrista **deve obrigatoriamente registrar a adaptação na ficha de avaliação**, explicitando que a medida foi obtida sob condição adaptada e não sob o protocolo padrão ISAK.
 
 ### 4.3 Diâmetros Ósseos (Breadths)
 - **Instrumento:** Paquímetro pequeno / paquímetro ósseo de pontas chatas (caliper bi-epicondilar).
