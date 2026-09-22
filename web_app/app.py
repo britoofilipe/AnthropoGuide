@@ -34,8 +34,8 @@ if "user_data" not in st.session_state:
     st.session_state.user_data = None
 if "messages" not in st.session_state:
     st.session_state.messages = []
-if "bot" not in st.session_state:
-    st.session_state.bot = None
+if "bot" not in st.session_state or st.session_state.bot is None or not hasattr(st.session_state.bot, "send_message_stream"):
+    st.session_state.bot = AnthropoGuideBot()
 
 ADMIN_PASS = os.getenv("ADMIN_PASSWORD", "filipe123")
 
@@ -61,7 +61,16 @@ def render_chat(placeholder: str, key: str) -> None:
             st.markdown(prompt)
 
         with st.chat_message("assistant", avatar=avatar("assistant")):
-            resposta = st.write_stream(st.session_state.bot.send_message_stream(prompt))
+            if not hasattr(st.session_state.bot, "send_message_stream"):
+                st.session_state.bot = AnthropoGuideBot()
+
+            try:
+                resposta = st.write_stream(st.session_state.bot.send_message_stream(prompt))
+            except Exception:
+                with st.spinner("Consultando protocolo e evidências..."):
+                    resposta = st.session_state.bot.send_message(prompt)
+                    st.markdown(resposta)
+
             st.session_state.messages.append({"role": "assistant", "content": resposta})
 
 

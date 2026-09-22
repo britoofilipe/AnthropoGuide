@@ -76,7 +76,7 @@ class AnthropoGuideBot:
 
         if not self.client or not self.chat:
             self._init_client(self.current_model)
-            if not self.client:
+            if not self.client or not self.chat:
                 yield "Erro na inicialização da IA. Verifique se o pacote `google-genai` está instalado e se sua chave é válida."
                 return
 
@@ -91,9 +91,10 @@ class AnthropoGuideBot:
                     response_stream = self.chat.send_message_stream(message)
                     chunk_produzido = False
                     for chunk in response_stream:
-                        if chunk and chunk.text:
+                        texto = getattr(chunk, "text", None)
+                        if texto:
                             chunk_produzido = True
-                            yield chunk.text
+                            yield texto
                     if chunk_produzido:
                         self.current_model = modelo
                         return
