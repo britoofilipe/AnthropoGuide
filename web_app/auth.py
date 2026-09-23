@@ -389,21 +389,40 @@ def listar_alunos() -> List[Dict[str, Any]]:
     return resultado
 
 def trocar_senha(email: str, nova: str) -> Tuple[bool, str]:
-    """Grava a senha nova nos dois stores. A planilha é a fonte da verdade;
-    o SQLite é sempre atualizado para o fallback não ficar com a senha antiga."""
+    """Grava a senha nova nos dois stores. Mantém consistência entre planilha e SQLite.
+
+    - Sem planilha: atualiza SQLite; rowcount == 0 é erro.
+    - Com planilha e falha: NÃO atualiza SQLite (mantém sincronismo); retorna erro genérico.
+    - Com planilha e sucesso: atualiza SQLite; rowcount == 0 não é erro (aluno pode existir só na planilha).
+    """
     if len(nova) < 8:
         return False, "A nova senha precisa ter pelo menos 8 caracteres."
 
     email_clean = email.strip().lower()
     novo_hash = hash_password(nova)
-    gravou_planilha = False
 
+    # Se há planilha configurada, ela é a fonte da verdade
     if get_gsheets_url():
         try:
             gravou_planilha, _ = gsheets_trocar_senha(email_clean, novo_hash)
+            if not gravou_planilha:
+                # Falha na planilha: não atualiza SQLite para manter sincronismo
+                return False, "Não foi possível concluir a troca agora. Tente novamente em alguns minutos."
         except Exception as e:
-            print(f"[Auth] Falha ao trocar a senha no Google Sheets: {e}. Atualizando apenas o SQLite.")
+            # Exceção na planilha: não atualiza SQLite para manter sincronismo
+            print(f"[Auth] Falha ao trocar a senha no Google Sheets: {e}")
+            return False, "Não foi possível concluir a troca agora. Tente novamente em alguns minutos."
 
+        # Planilha sucesso: atualiza SQLite
+        with get_db_connection() as conn:
+            conn.execute(
+                "UPDATE alunos SET senha_hash = ?, precisa_trocar_senha = 0 WHERE email = ?",
+                (novo_hash, email_clean),
+            )
+            conn.commit()
+        return True, "Senha alterada."
+
+    # Sem planilha: comportamento simples (fallback local)
     with get_db_connection() as conn:
         cur = conn.execute(
             "UPDATE alunos SET senha_hash = ?, precisa_trocar_senha = 0 WHERE email = ?",
@@ -411,6 +430,6 @@ def trocar_senha(email: str, nova: str) -> Tuple[bool, str]:
         )
         conn.commit()
 
-    if not gravou_planilha and cur.rowcount == 0:
+    if cur.rowcount == 0:
         return False, "Aluno não encontrado."
     return True, "Senha alterada."
