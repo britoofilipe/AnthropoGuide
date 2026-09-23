@@ -373,13 +373,13 @@ def listar_alunos() -> List[Dict[str, Any]]:
             return gsheets_listar()
         except Exception as e:
             print(f"[Auth] Falha ao listar do Google Sheets: {e}. Listando do SQLite.")
-            
+
     # 2. Fallback SQLite
     hoje = datetime.date.today()
     with get_db_connection() as conn:
         cursor = conn.execute("SELECT * FROM alunos ORDER BY data_curso DESC, nome ASC")
         rows = cursor.fetchall()
-        
+
     resultado = []
     for r in rows:
         d = dict(r)
@@ -387,3 +387,30 @@ def listar_alunos() -> List[Dict[str, Any]]:
         d["dias_restantes"] = (exp - hoje).days
         resultado.append(d)
     return resultado
+
+def trocar_senha(email: str, nova: str) -> Tuple[bool, str]:
+    """Grava a senha nova nos dois stores. A planilha é a fonte da verdade;
+    o SQLite é sempre atualizado para o fallback não ficar com a senha antiga."""
+    if len(nova) < 8:
+        return False, "A nova senha precisa ter pelo menos 8 caracteres."
+
+    email_clean = email.strip().lower()
+    novo_hash = hash_password(nova)
+    gravou_planilha = False
+
+    if get_gsheets_url():
+        try:
+            gravou_planilha, _ = gsheets_trocar_senha(email_clean, novo_hash)
+        except Exception as e:
+            print(f"[Auth] Falha ao trocar a senha no Google Sheets: {e}. Atualizando apenas o SQLite.")
+
+    with get_db_connection() as conn:
+        cur = conn.execute(
+            "UPDATE alunos SET senha_hash = ?, precisa_trocar_senha = 0 WHERE email = ?",
+            (novo_hash, email_clean),
+        )
+        conn.commit()
+
+    if not gravou_planilha and cur.rowcount == 0:
+        return False, "Aluno não encontrado."
+    return True, "Senha alterada."

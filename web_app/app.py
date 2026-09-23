@@ -128,6 +128,24 @@ def render_login():
 def render_aluno_view():
     aluno = st.session_state.user_data
 
+    if aluno.get("precisa_trocar_senha"):
+        ui.cabecalho_chat(aviso=False)
+        st.markdown("#### Defina sua senha")
+        st.caption("Você entrou com a senha provisória enviada por e-mail. Defina uma senha sua para continuar.")
+        nova = st.text_input("Nova senha", type="password")
+        conf = st.text_input("Repita a nova senha", type="password")
+        if st.button("Salvar senha", type="primary"):
+            if nova != conf:
+                st.error("As senhas não coincidem.")
+            else:
+                ok, msg = auth.trocar_senha(aluno["email"], nova)
+                if ok:
+                    st.session_state.user_data["precisa_trocar_senha"] = 0
+                    st.rerun()
+                else:
+                    st.error(msg)
+        return
+
     with st.sidebar:
         st.markdown(f"#### {aluno['nome']}")
         st.caption(f"Turma: {aluno.get('turma', 'ISAK N1')}")
