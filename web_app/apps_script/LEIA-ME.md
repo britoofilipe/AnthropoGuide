@@ -12,6 +12,10 @@ Adicione três colunas novas à direita das colunas existentes, na seguinte orde
 
 As colunas existentes são: nome, email, senha_hash, turma, data_curso, status, data_expiracao.
 
+## Antes de Começar: Conferir o Histórico de Versões
+
+Antes de colar qualquer código novo, recomenda-se conferir o histórico de versões do projeto. Abra o menu Arquivo › Histórico de versões (File › Version history) para visualizar as versões anteriores. Isto permite reverter rapidamente a mudanças caso algo saia errado durante a integração.
+
 ## Passo 2: Colar as Funções no Apps Script
 
 Abra o projeto do Apps Script (aquele que já contém o `doPost` e `doGet`).
@@ -61,11 +65,15 @@ Modifique o trecho que monta o objeto JSON de cada linha para incluir também:
 
 Salve o projeto Apps Script.
 
-No menu "Deploy" (ou "Implantações"), selecione a implantação existente do Web App (aquela cuja URL está em uso).
+Siga exatamente esta sequência para garantir que a URL NÃO mude:
 
-Clique em "Create New Version" (ou "Criar nova versão").
+1. Menu Implantar › Gerenciar implantações (Deploy › Manage deployments).
+2. Localize a implantação existente do Web App (aquela cuja URL está em uso).
+3. Clique no ícone de lápis (Edit) ao lado dessa implantação.
+4. No campo Versão, escolha "Nova versão" (New version) — aparecerá uma nova entrada no dropdown.
+5. Clique em Implantar (Deploy).
 
-Selecione essa versão nova como "New Deployment" (não crie uma implantação nova, reutilize a URL existente).
+**Importante:** Não use a opção "Nova implantação" (New deployment) no passo 5. Isso criaria outra implantação com URL diferente e derrubaria o acesso de todos os alunos, já que o app usa a GSHEETS_URL atual. A URL deve permanecer exatamente a mesma.
 
 ## Passo 7: Conferir com curl
 
