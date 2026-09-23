@@ -51,13 +51,23 @@ def conferir_senha(senha: str, armazenado: str) -> bool:
     - Legado: SHA-256 puro (64 caracteres hexadecimais)
 
     Sempre usa hmac.compare_digest para evitar timing attacks.
+    Retorna False em qualquer formato inesperado sem lançar exceção.
     """
     if armazenado.startswith("scrypt$"):
-        _, salt_hex, esperado = armazenado.split("$")
-        derivado = hashlib.scrypt(
-            senha.encode("utf-8"), salt=bytes.fromhex(salt_hex), n=2**14, r=8, p=1, dklen=32
-        )
-        return hmac.compare_digest(derivado.hex(), esperado)
+        partes = armazenado.split("$")
+        if len(partes) != 3:
+            return False
+
+        _, salt_hex, esperado = partes
+        try:
+            salt = bytes.fromhex(salt_hex)
+            derivado = hashlib.scrypt(
+                senha.encode("utf-8"), salt=salt, n=2**14, r=8, p=1, dklen=32
+            )
+            return hmac.compare_digest(derivado.hex(), esperado)
+        except (ValueError, OverflowError):
+            return False
+
     return hmac.compare_digest(hashlib.sha256(senha.encode("utf-8")).hexdigest(), armazenado)
 
 def parse_date(val: Any) -> datetime.date:
@@ -285,15 +295,14 @@ def verificar_acesso(email: str, senha: str) -> Tuple[bool, str, Optional[Dict[s
         cursor = conn.execute("SELECT * FROM alunos WHERE email = ?", (email_clean,))
         row = cursor.fetchone()
 
-    if not row:
-        return False, "E-mail ou senha incorretos.", None
+        if not row:
+            return False, "E-mail ou senha incorretos.", None
 
-    if not conferir_senha(senha, row["senha_hash"]):
-        return False, "E-mail ou senha incorretos.", None
+        if not conferir_senha(senha, row["senha_hash"]):
+            return False, "E-mail ou senha incorretos.", None
 
-    # Regravar hash se for legado (SHA-256 sem scrypt)
-    if not row["senha_hash"].startswith("scrypt$"):
-        with get_db_connection() as conn:
+        # Regravar hash se for legado (SHA-256 sem scrypt) — mesma conexão
+        if not row["senha_hash"].startswith("scrypt$"):
             novo_hash = hash_password(senha)
             conn.execute("UPDATE alunos SET senha_hash = ? WHERE email = ?", (novo_hash, email_clean))
             conn.commit()
