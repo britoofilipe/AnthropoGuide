@@ -259,11 +259,26 @@ def init_db() -> None:
 # INTERFACE PÚBLICA (ROTEAMENTO INTELIGENTE)
 # ==========================================
 
-def cadastrar_aluno(nome: str, email: str, senha: str, turma: str, data_curso: datetime.date, origem: str = "manual", eduzz_sale_id: Optional[int] = None, precisa_trocar_senha: int = 0) -> Tuple[bool, str]:
+def cadastrar_aluno(nome: str, email: str, senha: str, turma: str, data_curso: datetime.date, origem: str = "manual", eduzz_sale_id: Optional[int] = None, precisa_trocar_senha: int = 0, data_expiracao: Optional[datetime.date] = None) -> Tuple[bool, str]:
     email_clean = email.strip().lower()
-    data_expiracao = data_curso + datetime.timedelta(days=120)
+    if data_expiracao is None:
+        data_expiracao = data_curso + datetime.timedelta(days=120)
     senha_h = hash_password(senha)
 
+    # Grava no SQLite (persistência local, sempre)
+    try:
+        with get_db_connection() as conn:
+            conn.execute("""
+                INSERT INTO alunos (nome, email, senha_hash, turma, data_curso, status, data_expiracao, perfis_aprovados, origem, eduzz_sale_id, precisa_trocar_senha)
+                VALUES (?, ?, ?, ?, ?, 'pos_curso', ?, 0, ?, ?, ?)
+            """, (nome.strip(), email_clean, senha_h, turma.strip(), data_curso.isoformat(), data_expiracao.isoformat(), origem, eduzz_sale_id, precisa_trocar_senha))
+            conn.commit()
+    except sqlite3.IntegrityError:
+        return False, "Já existe um aluno cadastrado com este e-mail."
+    except Exception as e:
+        return False, f"Erro ao cadastrar aluno: {str(e)}"
+
+    # Tenta gravar na planilha também (persistência permanente)
     if get_gsheets_url():
         try:
             # Verifica se já existe na planilha
@@ -272,21 +287,10 @@ def cadastrar_aluno(nome: str, email: str, senha: str, turma: str, data_curso: d
                 return False, "Já existe um aluno cadastrado com este e-mail na planilha."
             return gsheets_cadastrar(nome.strip(), email_clean, senha_h, turma.strip(), data_curso, data_expiracao, origem=origem, eduzz_sale_id=eduzz_sale_id, precisa_trocar_senha=precisa_trocar_senha)
         except Exception as e:
-            print(f"[Auth] Erro ao cadastrar no Google Sheets: {e}. Tentando fallback SQLite.")
+            print(f"[Auth] Erro ao cadastrar no Google Sheets: {e}. SQLite já foi gravado.")
+            return True, f"Aluno cadastrado com sucesso no SQLite! Acesso ativo até {data_expiracao.strftime('%d/%m/%Y')} (4 meses)."
 
-    # Fallback SQLite
-    try:
-        with get_db_connection() as conn:
-            conn.execute("""
-                INSERT INTO alunos (nome, email, senha_hash, turma, data_curso, status, data_expiracao, perfis_aprovados, origem, eduzz_sale_id, precisa_trocar_senha)
-                VALUES (?, ?, ?, ?, ?, 'pos_curso', ?, 0, ?, ?, ?)
-            """, (nome.strip(), email_clean, senha_h, turma.strip(), data_curso.isoformat(), data_expiracao.isoformat(), origem, eduzz_sale_id, precisa_trocar_senha))
-            conn.commit()
-        return True, f"Aluno cadastrado com sucesso! Acesso ativo até {data_expiracao.strftime('%d/%m/%Y')} (4 meses)."
-    except sqlite3.IntegrityError:
-        return False, "Já existe um aluno cadastrado com este e-mail."
-    except Exception as e:
-        return False, f"Erro ao cadastrar aluno: {str(e)}"
+    return True, f"Aluno cadastrado com sucesso! Acesso ativo até {data_expiracao.strftime('%d/%m/%Y')} (4 meses)."
 
 def homologar_acreditacao(email: str, data_aprovacao: Optional[datetime.date] = None) -> Tuple[bool, str]:
     if data_aprovacao is None:
