@@ -124,15 +124,18 @@ def gsheets_listar() -> List[Dict[str, Any]]:
             "data_curso": data_curso.isoformat(),
             "status": status,
             "data_expiracao": data_exp.isoformat(),
-            "dias_restantes": dias_restantes
+            "dias_restantes": dias_restantes,
+            "origem": str(r.get("origem") or "manual").strip().lower(),
+            "eduzz_sale_id": int(r["eduzz_sale_id"]) if str(r.get("eduzz_sale_id") or "").strip() else None,
+            "precisa_trocar_senha": int(r.get("precisa_trocar_senha") or 0)
         })
     return resultado
 
-def gsheets_cadastrar(nome: str, email: str, senha_hash: str, turma: str, data_curso: datetime.date, data_expiracao: datetime.date) -> Tuple[bool, str]:
+def gsheets_cadastrar(nome: str, email: str, senha_hash: str, turma: str, data_curso: datetime.date, data_expiracao: datetime.date, origem: str = "manual", eduzz_sale_id: Optional[int] = None, precisa_trocar_senha: int = 0) -> Tuple[bool, str]:
     url = get_gsheets_url()
     if not url:
         return False, "URL do Google Sheets não configurada."
-        
+
     payload = {
         "action": "cadastrar",
         "nome": nome,
@@ -141,25 +144,53 @@ def gsheets_cadastrar(nome: str, email: str, senha_hash: str, turma: str, data_c
         "turma": turma,
         "data_curso": data_curso.isoformat(),
         "status": "pos_curso",
-        "data_expiracao": data_expiracao.isoformat()
+        "data_expiracao": data_expiracao.isoformat(),
+        "origem": origem,
+        "eduzz_sale_id": eduzz_sale_id,
+        "precisa_trocar_senha": precisa_trocar_senha
     }
-    
+
     resp = requests.post(url, json=payload, timeout=12, allow_redirects=True)
     if resp.status_code == 200:
         return True, f"Aluno cadastrado com sucesso na planilha! Acesso ativo até {data_expiracao.strftime('%d/%m/%Y')} (4 meses)."
     return False, f"Falha ao gravar no Google Sheets: {resp.text}"
 
+def gsheets_trocar_senha(email: str, senha_hash: str) -> Tuple[bool, str]:
+    url = get_gsheets_url()
+    if not url:
+        return False, "URL do Google Sheets não configurada."
+    resp = requests.post(
+        url, json={"action": "trocar_senha", "email": email, "senha_hash": senha_hash},
+        timeout=12, allow_redirects=True,
+    )
+    if resp.status_code == 200:
+        return True, "Senha alterada na planilha."
+    return False, f"Falha ao trocar a senha no Google Sheets: {resp.text}"
+
+
+def gsheets_bloquear(eduzz_sale_id: int) -> Tuple[bool, str]:
+    url = get_gsheets_url()
+    if not url:
+        return False, "URL do Google Sheets não configurada."
+    resp = requests.post(
+        url, json={"action": "bloquear", "eduzz_sale_id": eduzz_sale_id},
+        timeout=12, allow_redirects=True,
+    )
+    if resp.status_code == 200:
+        return True, "Acesso bloqueado na planilha."
+    return False, f"Falha ao bloquear no Google Sheets: {resp.text}"
+
 def gsheets_homologar(email: str, nova_expiracao: datetime.date) -> Tuple[bool, str]:
     url = get_gsheets_url()
     if not url:
         return False, "URL do Google Sheets não configurada."
-        
+
     payload = {
         "action": "homologar",
         "email": email,
         "nova_expiracao": nova_expiracao.isoformat()
     }
-    
+
     resp = requests.post(url, json=payload, timeout=12, allow_redirects=True)
     if resp.status_code == 200:
         return True, f"Acreditação homologada na planilha! Acesso estendido por +4 anos (até {nova_expiracao.strftime('%d/%m/%Y')})."
@@ -209,28 +240,28 @@ def init_db() -> None:
 # INTERFACE PÚBLICA (ROTEAMENTO INTELIGENTE)
 # ==========================================
 
-def cadastrar_aluno(nome: str, email: str, senha: str, turma: str, data_curso: datetime.date) -> Tuple[bool, str]:
+def cadastrar_aluno(nome: str, email: str, senha: str, turma: str, data_curso: datetime.date, origem: str = "manual", eduzz_sale_id: Optional[int] = None, precisa_trocar_senha: int = 0) -> Tuple[bool, str]:
     email_clean = email.strip().lower()
     data_expiracao = data_curso + datetime.timedelta(days=120)
     senha_h = hash_password(senha)
-    
+
     if get_gsheets_url():
         try:
             # Verifica se já existe na planilha
             existentes = gsheets_listar()
             if any(a["email"] == email_clean for a in existentes):
                 return False, "Já existe um aluno cadastrado com este e-mail na planilha."
-            return gsheets_cadastrar(nome.strip(), email_clean, senha_h, turma.strip(), data_curso, data_expiracao)
+            return gsheets_cadastrar(nome.strip(), email_clean, senha_h, turma.strip(), data_curso, data_expiracao, origem=origem, eduzz_sale_id=eduzz_sale_id, precisa_trocar_senha=precisa_trocar_senha)
         except Exception as e:
             print(f"[Auth] Erro ao cadastrar no Google Sheets: {e}. Tentando fallback SQLite.")
-            
+
     # Fallback SQLite
     try:
         with get_db_connection() as conn:
             conn.execute("""
-                INSERT INTO alunos (nome, email, senha_hash, turma, data_curso, status, data_expiracao, perfis_aprovados)
-                VALUES (?, ?, ?, ?, ?, 'pos_curso', ?, 0)
-            """, (nome.strip(), email_clean, senha_h, turma.strip(), data_curso.isoformat(), data_expiracao.isoformat()))
+                INSERT INTO alunos (nome, email, senha_hash, turma, data_curso, status, data_expiracao, perfis_aprovados, origem, eduzz_sale_id, precisa_trocar_senha)
+                VALUES (?, ?, ?, ?, ?, 'pos_curso', ?, 0, ?, ?, ?)
+            """, (nome.strip(), email_clean, senha_h, turma.strip(), data_curso.isoformat(), data_expiracao.isoformat(), origem, eduzz_sale_id, precisa_trocar_senha))
             conn.commit()
         return True, f"Aluno cadastrado com sucesso! Acesso ativo até {data_expiracao.strftime('%d/%m/%Y')} (4 meses)."
     except sqlite3.IntegrityError:
