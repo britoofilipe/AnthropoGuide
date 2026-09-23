@@ -75,3 +75,32 @@ def test_gsheets_listar_tolera_linha_sem_campos_novos(monkeypatch):
     assert aluno["origem"] == "manual"
     assert aluno["eduzz_sale_id"] is None
     assert aluno["precisa_trocar_senha"] == 0
+
+
+def test_gsheets_listar_tolera_eduzz_sale_id_nao_numerico(monkeypatch):
+    """Valida que eduzz_sale_id não-numérico não derruba a leitura inteira da lista."""
+    linhas = [
+        {"nome": "Ana Com Erro", "email": "ana_erro@x.com", "senha_hash": "h1", "turma": "Eduzz",
+         "data_curso": "2026-09-23", "status": "pos_curso", "data_expiracao": "2099-01-01",
+         "origem": "eduzz", "eduzz_sale_id": "9O01", "precisa_trocar_senha": "1"},
+        {"nome": "Bruno OK", "email": "bruno@x.com", "senha_hash": "h2", "turma": "Eduzz",
+         "data_curso": "2026-09-23", "status": "pos_curso", "data_expiracao": "2099-01-01",
+         "origem": "eduzz", "eduzz_sale_id": "9002", "precisa_trocar_senha": "0"}
+    ]
+    monkeypatch.setattr(auth, "get_gsheets_url", lambda: "https://script.exemplo/exec")
+    monkeypatch.setattr(auth.requests, "get",
+                        lambda url, timeout=None, allow_redirects=None: RespostaFalsa(linhas))
+
+    # Não deve lançar exceção
+    alunos = auth.gsheets_listar()
+
+    # Ambas as linhas devem retornar
+    assert len(alunos) == 2
+
+    # A linha com erro deve ter eduzz_sale_id=None
+    assert alunos[0]["nome"] == "Ana Com Erro"
+    assert alunos[0]["eduzz_sale_id"] is None
+
+    # A linha OK deve ter eduzz_sale_id correto
+    assert alunos[1]["nome"] == "Bruno OK"
+    assert alunos[1]["eduzz_sale_id"] == 9002

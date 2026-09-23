@@ -114,7 +114,17 @@ def gsheets_listar() -> List[Dict[str, Any]]:
         status = str(r.get("status", "pos_curso")).strip().lower()
         if hoje > data_exp and status != "expirado":
             status = "expirado"
-            
+
+        # Parse eduzz_sale_id com tolerância a valores não-numéricos
+        eduzz_sale_id_valor = None
+        try:
+            sale_id_str = str(r.get("eduzz_sale_id") or "").strip()
+            if sale_id_str:
+                eduzz_sale_id_valor = int(sale_id_str)
+        except (TypeError, ValueError):
+            # Valor não-numérico ou inválido: mantém None
+            pass
+
         resultado.append({
             "id": r.get("id", len(resultado) + 1),
             "nome": nome,
@@ -126,7 +136,7 @@ def gsheets_listar() -> List[Dict[str, Any]]:
             "data_expiracao": data_exp.isoformat(),
             "dias_restantes": dias_restantes,
             "origem": str(r.get("origem") or "manual").strip().lower(),
-            "eduzz_sale_id": int(r["eduzz_sale_id"]) if str(r.get("eduzz_sale_id") or "").strip() else None,
+            "eduzz_sale_id": eduzz_sale_id_valor,
             "precisa_trocar_senha": int(r.get("precisa_trocar_senha") or 0)
         })
     return resultado
