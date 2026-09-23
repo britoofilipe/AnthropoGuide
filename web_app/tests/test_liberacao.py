@@ -51,3 +51,44 @@ def test_bloquear_usa_planilha_e_sqlite(tmp_path, monkeypatch):
 def test_senha_provisoria_sem_caracteres_ambiguos():
     senha = liberacao.gerar_senha_provisoria()
     assert len(senha) == 10 and not set(senha) & set("O0Il1")
+
+
+def test_bloquear_quando_aluno_so_existe_na_planilha(tmp_path, monkeypatch):
+    monkeypatch.setattr(auth, "DB_PATH", tmp_path / "b2.db")
+    monkeypatch.setattr(auth, "get_gsheets_url", lambda: "https://script.exemplo/exec")
+    monkeypatch.setattr(auth, "gsheets_bloquear", lambda sale_id: (True, "ok"))
+    auth.init_db()
+
+    assert liberacao.bloquear({"id": 9001, "status": "refunded"})
+    # SQLite vazio: nenhuma linha para atualizar
+    with auth.get_db_connection() as conn:
+        linha = conn.execute("SELECT status FROM alunos WHERE eduzz_sale_id = 9001").fetchone()
+    assert linha is None
+
+
+def test_bloquear_quando_nao_existe_em_nenhum_lugar(tmp_path, monkeypatch):
+    monkeypatch.setattr(auth, "DB_PATH", tmp_path / "b3.db")
+    monkeypatch.setattr(auth, "get_gsheets_url", lambda: "https://script.exemplo/exec")
+    monkeypatch.setattr(auth, "gsheets_bloquear", lambda sale_id: (False, "venda nao encontrada"))
+    auth.init_db()
+
+    assert not liberacao.bloquear({"id": 9001, "status": "refunded"})
+
+
+def test_liberar_falha_se_gsheets_cadastrar_retorna_false(tmp_path, monkeypatch):
+    monkeypatch.setattr(auth, "DB_PATH", tmp_path / "l3.db")
+    monkeypatch.setattr(auth, "get_gsheets_url", lambda: "https://script.exemplo/exec")
+    monkeypatch.setattr(auth, "gsheets_listar", lambda: [])
+    monkeypatch.setattr(auth, "gsheets_cadastrar", lambda *a, **k: (False, "erro na planilha"))
+    auth.init_db()
+
+    resultado = liberacao.liberar(VENDA, prazo_dias=120)
+    assert resultado is None
+
+    # SQLite deve estar vazio (nenhum aluno foi criado)
+    with auth.get_db_connection() as conn:
+        linha = conn.execute("SELECT COUNT(*) as cnt FROM alunos").fetchone()
+    assert linha["cnt"] == 0
+
+    # ja_processada deve continuar retornando False para tentar novamente
+    assert not liberacao.ja_processada(9001)

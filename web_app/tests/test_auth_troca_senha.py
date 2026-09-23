@@ -45,6 +45,8 @@ def test_troca_senha_planilha_falha_nao_atualiza_sqlite(tmp_path, monkeypatch):
     """Planilha retorna False: não atualiza SQLite, mantém sincronismo."""
     monkeypatch.setattr(auth, "DB_PATH", tmp_path / "t4.db")
     monkeypatch.setattr(auth, "get_gsheets_url", lambda: "https://script.exemplo/exec")
+    monkeypatch.setattr(auth, "gsheets_listar", lambda: [])
+    monkeypatch.setattr(auth, "gsheets_cadastrar", lambda *a, **k: (True, "ok"))
     monkeypatch.setattr(auth, "gsheets_trocar_senha", lambda email, senha_hash: (False, "erro na planilha"))
     auth.init_db()
     auth.cadastrar_aluno("Ana Souza", "ana@x.com", "provisoria", "Eduzz", datetime.date.today())
@@ -69,6 +71,8 @@ def test_troca_senha_planilha_excecao_nao_atualiza_sqlite(tmp_path, monkeypatch)
     """Planilha lança exceção: não atualiza SQLite, mantém sincronismo, nenhuma exceção escapa."""
     monkeypatch.setattr(auth, "DB_PATH", tmp_path / "t5.db")
     monkeypatch.setattr(auth, "get_gsheets_url", lambda: "https://script.exemplo/exec")
+    monkeypatch.setattr(auth, "gsheets_listar", lambda: [])
+    monkeypatch.setattr(auth, "gsheets_cadastrar", lambda *a, **k: (True, "ok"))
     monkeypatch.setattr(auth, "gsheets_trocar_senha", lambda email, senha_hash: (_ for _ in ()).throw(RuntimeError("conexao perdida")))
     auth.init_db()
     auth.cadastrar_aluno("Ana Souza", "ana@x.com", "provisoria", "Eduzz", datetime.date.today())

@@ -47,7 +47,7 @@ def liberar(venda: dict, prazo_dias: int):
     except sqlite3.IntegrityError:
         return None
     if not ok:
-        raise RuntimeError(msg)
+        return None
     return {"nome": nome, "email": email, "senha": senha, "validade": validade, "sale_id": sale_id}
 
 

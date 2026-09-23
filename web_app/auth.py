@@ -171,6 +171,14 @@ def gsheets_cadastrar(nome: str, email: str, senha_hash: str, turma: str, data_c
 
     resp = requests.post(url, json=payload, timeout=12, allow_redirects=True)
     if resp.status_code == 200:
+        try:
+            corpo = resp.json()
+            if isinstance(corpo, dict) and corpo.get("ok") == False:
+                msg_erro = corpo.get("erro", "Erro desconhecido na planilha")
+                return False, msg_erro
+        except (ValueError, TypeError, AttributeError):
+            # JSON inválido ou tipo inesperado: trata 200 como sucesso (backward compat)
+            pass
         return True, f"Aluno cadastrado com sucesso na planilha! Acesso ativo até {data_expiracao.strftime('%d/%m/%Y')} (4 meses)."
     return False, f"Falha ao gravar no Google Sheets: {resp.text}"
 
@@ -183,6 +191,14 @@ def gsheets_trocar_senha(email: str, senha_hash: str) -> Tuple[bool, str]:
         timeout=12, allow_redirects=True,
     )
     if resp.status_code == 200:
+        try:
+            corpo = resp.json()
+            if isinstance(corpo, dict) and corpo.get("ok") == False:
+                msg_erro = corpo.get("erro", "Erro desconhecido na planilha")
+                return False, msg_erro
+        except (ValueError, TypeError, AttributeError):
+            # JSON inválido ou tipo inesperado: trata 200 como sucesso (backward compat)
+            pass
         return True, "Senha alterada na planilha."
     return False, f"Falha ao trocar a senha no Google Sheets: {resp.text}"
 
@@ -196,6 +212,14 @@ def gsheets_bloquear(eduzz_sale_id: int) -> Tuple[bool, str]:
         timeout=12, allow_redirects=True,
     )
     if resp.status_code == 200:
+        try:
+            corpo = resp.json()
+            if isinstance(corpo, dict) and corpo.get("ok") == False:
+                msg_erro = corpo.get("erro", "Erro desconhecido na planilha")
+                return False, msg_erro
+        except (ValueError, TypeError, AttributeError):
+            # JSON inválido ou tipo inesperado: trata 200 como sucesso (backward compat)
+            pass
         return True, "Acesso bloqueado na planilha."
     return False, f"Falha ao bloquear no Google Sheets: {resp.text}"
 
@@ -265,7 +289,36 @@ def cadastrar_aluno(nome: str, email: str, senha: str, turma: str, data_curso: d
         data_expiracao = data_curso + datetime.timedelta(days=120)
     senha_h = hash_password(senha)
 
-    # Grava no SQLite (persistência local, sempre)
+    # Se há Google Sheets configurado, tenta PRIMEIRO e só grava SQLite se suceder
+    if get_gsheets_url():
+        try:
+            # Verifica se já existe na planilha
+            existentes = gsheets_listar()
+            if any(a["email"] == email_clean for a in existentes):
+                return False, "Já existe um aluno cadastrado com este e-mail na planilha."
+            # Tenta gravar na planilha
+            ok, msg = gsheets_cadastrar(nome.strip(), email_clean, senha_h, turma.strip(), data_curso, data_expiracao, origem=origem, eduzz_sale_id=eduzz_sale_id, precisa_trocar_senha=precisa_trocar_senha)
+            if not ok:
+                # Falha na planilha: NÃO grava no SQLite, volta para tentar de novo
+                return False, msg
+            # Planilha sucedeu: grava no SQLite como espelho
+            try:
+                with get_db_connection() as conn:
+                    conn.execute("""
+                        INSERT INTO alunos (nome, email, senha_hash, turma, data_curso, status, data_expiracao, perfis_aprovados, origem, eduzz_sale_id, precisa_trocar_senha)
+                        VALUES (?, ?, ?, ?, ?, 'pos_curso', ?, 0, ?, ?, ?)
+                    """, (nome.strip(), email_clean, senha_h, turma.strip(), data_curso.isoformat(), data_expiracao.isoformat(), origem, eduzz_sale_id, precisa_trocar_senha))
+                    conn.commit()
+            except Exception as e:
+                # SQLite falhou, mas planilha já tem: registra log e devolve sucesso
+                print(f"[Auth] Erro ao espelhar no SQLite após sucesso na planilha: {e}")
+            return True, msg
+        except Exception as e:
+            # Exceção ao consultar/gravar planilha: não grava SQLite
+            print(f"[Auth] Erro ao cadastrar no Google Sheets: {e}.")
+            return False, f"Não foi possível completar o cadastro agora. Tente novamente."
+
+    # Sem Google Sheets: grava apenas no SQLite
     try:
         with get_db_connection() as conn:
             conn.execute("""
@@ -273,24 +326,11 @@ def cadastrar_aluno(nome: str, email: str, senha: str, turma: str, data_curso: d
                 VALUES (?, ?, ?, ?, ?, 'pos_curso', ?, 0, ?, ?, ?)
             """, (nome.strip(), email_clean, senha_h, turma.strip(), data_curso.isoformat(), data_expiracao.isoformat(), origem, eduzz_sale_id, precisa_trocar_senha))
             conn.commit()
+        return True, f"Aluno cadastrado com sucesso! Acesso ativo até {data_expiracao.strftime('%d/%m/%Y')} (4 meses)."
     except sqlite3.IntegrityError:
         return False, "Já existe um aluno cadastrado com este e-mail."
     except Exception as e:
         return False, f"Erro ao cadastrar aluno: {str(e)}"
-
-    # Tenta gravar na planilha também (persistência permanente)
-    if get_gsheets_url():
-        try:
-            # Verifica se já existe na planilha
-            existentes = gsheets_listar()
-            if any(a["email"] == email_clean for a in existentes):
-                return False, "Já existe um aluno cadastrado com este e-mail na planilha."
-            return gsheets_cadastrar(nome.strip(), email_clean, senha_h, turma.strip(), data_curso, data_expiracao, origem=origem, eduzz_sale_id=eduzz_sale_id, precisa_trocar_senha=precisa_trocar_senha)
-        except Exception as e:
-            print(f"[Auth] Erro ao cadastrar no Google Sheets: {e}. SQLite já foi gravado.")
-            return True, f"Aluno cadastrado com sucesso no SQLite! Acesso ativo até {data_expiracao.strftime('%d/%m/%Y')} (4 meses)."
-
-    return True, f"Aluno cadastrado com sucesso! Acesso ativo até {data_expiracao.strftime('%d/%m/%Y')} (4 meses)."
 
 def homologar_acreditacao(email: str, data_aprovacao: Optional[datetime.date] = None) -> Tuple[bool, str]:
     if data_aprovacao is None:
