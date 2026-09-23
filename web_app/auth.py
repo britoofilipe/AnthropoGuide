@@ -156,6 +156,18 @@ def init_db() -> None:
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             )
         """)
+        colunas = {linha[1] for linha in conn.execute("PRAGMA table_info(alunos)")}
+        for nome, definicao in (
+            ("origem", "TEXT DEFAULT 'manual'"),
+            ("eduzz_sale_id", "INTEGER"),
+            ("precisa_trocar_senha", "INTEGER DEFAULT 0"),
+        ):
+            if nome not in colunas:
+                conn.execute(f"ALTER TABLE alunos ADD COLUMN {nome} {definicao}")
+        conn.execute(
+            "CREATE UNIQUE INDEX IF NOT EXISTS idx_alunos_eduzz_sale"
+            " ON alunos (eduzz_sale_id) WHERE eduzz_sale_id IS NOT NULL"
+        )
         conn.commit()
 
 # ==========================================
