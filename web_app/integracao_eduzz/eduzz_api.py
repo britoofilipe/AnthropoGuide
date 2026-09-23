@@ -7,15 +7,32 @@ BASE = "https://api.eduzz.com/myeduzz/v1/sales"
 PAUSA_ENTRE_PAGINAS = 2.1  # limite documentado: 30 requisições por minuto
 
 
-def listar_vendas(token, product_id, inicio, fim, status):
+def listar_vendas(token: str, product_id: int, inicio: datetime.date, fim: datetime.date, status: str) -> list[dict]:
+    """Lista vendas da API Eduzz com paginação automática.
+
+    Retorna todos os objetos 'items' de todas as páginas concatenados em uma lista.
+    Pausa entre requisições para respeitar limite de rate-limit.
+
+    Args:
+        token: Token de autenticação da API Eduzz
+        product_id: ID do produto a filtrar
+        inicio: Data inicial do período (inclusiva)
+        fim: Data final do período (inclusiva)
+        status: Status da venda ('paid', 'refunded', etc.)
+
+    Returns:
+        Lista de dicionários com os dados das vendas
+    """
     vendas, pagina, total_paginas = [], 1, 1
     while pagina <= total_paginas:
         resposta = requests.get(
             BASE,
-            headers={"authorization": f"bearer {token}", "content-type": "application/json"},
+            headers={"authorization": f"bearer {token}"},
             params={
                 "startDate": inicio.isoformat(),
                 "endDate": fim.isoformat(),
+                # Para vendas pagas, usa data do pagamento; para reembolso/cancelamento,
+                # usa data da última atualização (quando o status mudou).
                 "referenceDate": "paidAt" if status == "paid" else "updatedAt",
                 "productId": product_id,
                 "status": status,
