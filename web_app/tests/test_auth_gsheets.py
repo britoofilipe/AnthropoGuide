@@ -78,14 +78,17 @@ def test_gsheets_listar_tolera_linha_sem_campos_novos(monkeypatch):
 
 
 def test_gsheets_listar_tolera_eduzz_sale_id_nao_numerico(monkeypatch):
-    """Valida que eduzz_sale_id não-numérico não derruba a leitura inteira da lista."""
+    """Valida que eduzz_sale_id e precisa_trocar_senha não-numéricos não derrubam a lista."""
     linhas = [
         {"nome": "Ana Com Erro", "email": "ana_erro@x.com", "senha_hash": "h1", "turma": "Eduzz",
          "data_curso": "2026-09-23", "status": "pos_curso", "data_expiracao": "2099-01-01",
          "origem": "eduzz", "eduzz_sale_id": "9O01", "precisa_trocar_senha": "1"},
         {"nome": "Bruno OK", "email": "bruno@x.com", "senha_hash": "h2", "turma": "Eduzz",
          "data_curso": "2026-09-23", "status": "pos_curso", "data_expiracao": "2099-01-01",
-         "origem": "eduzz", "eduzz_sale_id": "9002", "precisa_trocar_senha": "0"}
+         "origem": "eduzz", "eduzz_sale_id": "9002", "precisa_trocar_senha": "0"},
+        {"nome": "Carol Com Erro", "email": "carol_erro@x.com", "senha_hash": "h3", "turma": "Eduzz",
+         "data_curso": "2026-09-23", "status": "pos_curso", "data_expiracao": "2099-01-01",
+         "origem": "eduzz", "eduzz_sale_id": "9003", "precisa_trocar_senha": "sim"}
     ]
     monkeypatch.setattr(auth, "get_gsheets_url", lambda: "https://script.exemplo/exec")
     monkeypatch.setattr(auth.requests, "get",
@@ -94,13 +97,19 @@ def test_gsheets_listar_tolera_eduzz_sale_id_nao_numerico(monkeypatch):
     # Não deve lançar exceção
     alunos = auth.gsheets_listar()
 
-    # Ambas as linhas devem retornar
-    assert len(alunos) == 2
+    # Todas as três linhas devem retornar
+    assert len(alunos) == 3
 
-    # A linha com erro deve ter eduzz_sale_id=None
+    # A primeira linha tem eduzz_sale_id não-numérico
     assert alunos[0]["nome"] == "Ana Com Erro"
     assert alunos[0]["eduzz_sale_id"] is None
 
-    # A linha OK deve ter eduzz_sale_id correto
+    # A segunda linha OK tem valores corretos
     assert alunos[1]["nome"] == "Bruno OK"
     assert alunos[1]["eduzz_sale_id"] == 9002
+    assert alunos[1]["precisa_trocar_senha"] == 0
+
+    # A terceira linha tem precisa_trocar_senha não-numérico ("sim")
+    assert alunos[2]["nome"] == "Carol Com Erro"
+    assert alunos[2]["eduzz_sale_id"] == 9003
+    assert alunos[2]["precisa_trocar_senha"] == 0  # Default seguro para valor inválido

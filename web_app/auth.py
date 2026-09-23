@@ -125,6 +125,15 @@ def gsheets_listar() -> List[Dict[str, Any]]:
             # Valor não-numérico ou inválido: mantém None
             pass
 
+        # Parse precisa_trocar_senha com tolerância a valores não-numéricos
+        precisa_trocar_senha_valor = 0
+        try:
+            senha_val = r.get("precisa_trocar_senha") or 0
+            precisa_trocar_senha_valor = int(senha_val)
+        except (TypeError, ValueError):
+            # Valor não-numérico ou inválido: default seguro 0 (não precisa trocar)
+            pass
+
         resultado.append({
             "id": r.get("id", len(resultado) + 1),
             "nome": nome,
@@ -137,7 +146,7 @@ def gsheets_listar() -> List[Dict[str, Any]]:
             "dias_restantes": dias_restantes,
             "origem": str(r.get("origem") or "manual").strip().lower(),
             "eduzz_sale_id": eduzz_sale_id_valor,
-            "precisa_trocar_senha": int(r.get("precisa_trocar_senha") or 0)
+            "precisa_trocar_senha": precisa_trocar_senha_valor
         })
     return resultado
 
