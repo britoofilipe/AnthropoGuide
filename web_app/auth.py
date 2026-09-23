@@ -10,6 +10,7 @@ Regras de Acesso do Prof. Filipe Brito:
 import os
 import sqlite3
 import hashlib
+import hmac
 import datetime
 import requests
 from pathlib import Path
@@ -33,7 +34,31 @@ def get_gsheets_url() -> Optional[str]:
     return url.strip() if url else None
 
 def hash_password(password: str) -> str:
-    return hashlib.sha256(password.encode("utf-8")).hexdigest()
+    """Gera hash de senha com salt aleatório usando scrypt.
+
+    Formato: "scrypt$<salt_hex>$<hash_hex>"
+    """
+    salt = os.urandom(16)
+    derivado = hashlib.scrypt(password.encode("utf-8"), salt=salt, n=2**14, r=8, p=1, dklen=32)
+    return f"scrypt${salt.hex()}${derivado.hex()}"
+
+
+def conferir_senha(senha: str, armazenado: str) -> bool:
+    """Verifica se a senha corresponde ao hash armazenado.
+
+    Aceita dois formatos:
+    - Novo: "scrypt$<salt_hex>$<hash_hex>" (com salt aleatório)
+    - Legado: SHA-256 puro (64 caracteres hexadecimais)
+
+    Sempre usa hmac.compare_digest para evitar timing attacks.
+    """
+    if armazenado.startswith("scrypt$"):
+        _, salt_hex, esperado = armazenado.split("$")
+        derivado = hashlib.scrypt(
+            senha.encode("utf-8"), salt=bytes.fromhex(salt_hex), n=2**14, r=8, p=1, dklen=32
+        )
+        return hmac.compare_digest(derivado.hex(), esperado)
+    return hmac.compare_digest(hashlib.sha256(senha.encode("utf-8")).hexdigest(), armazenado)
 
 def parse_date(val: Any) -> datetime.date:
     """Converte strings ISO, timestamps do Google Sheets ou objetos date para datetime.date."""
@@ -237,16 +262,15 @@ def homologar_acreditacao(email: str, data_aprovacao: Optional[datetime.date] = 
 
 def verificar_acesso(email: str, senha: str) -> Tuple[bool, str, Optional[Dict[str, Any]]]:
     email_clean = email.strip().lower()
-    senha_h = hash_password(senha)
     hoje = datetime.date.today()
-    
+
     # 1. Tenta buscar no Google Sheets
     if get_gsheets_url():
         try:
             alunos = gsheets_listar()
             aluno = next((a for a in alunos if a["email"] == email_clean), None)
             if aluno:
-                if aluno["senha_hash"] != senha_h:
+                if not conferir_senha(senha, aluno["senha_hash"]):
                     return False, "E-mail ou senha incorretos.", None
                 data_exp = parse_date(aluno["data_expiracao"])
                 if hoje > data_exp:
@@ -255,21 +279,28 @@ def verificar_acesso(email: str, senha: str) -> Tuple[bool, str, Optional[Dict[s
                 return True, "Acesso autorizado", aluno
         except Exception as e:
             print(f"[Auth] Falha na consulta ao Google Sheets: {e}. Recorrendo ao SQLite.")
-            
+
     # 2. Fallback SQLite
     with get_db_connection() as conn:
         cursor = conn.execute("SELECT * FROM alunos WHERE email = ?", (email_clean,))
         row = cursor.fetchone()
-        
+
     if not row:
         return False, "E-mail ou senha incorretos.", None
-        
-    if row["senha_hash"] != senha_h:
+
+    if not conferir_senha(senha, row["senha_hash"]):
         return False, "E-mail ou senha incorretos.", None
-        
+
+    # Regravar hash se for legado (SHA-256 sem scrypt)
+    if not row["senha_hash"].startswith("scrypt$"):
+        with get_db_connection() as conn:
+            novo_hash = hash_password(senha)
+            conn.execute("UPDATE alunos SET senha_hash = ? WHERE email = ?", (novo_hash, email_clean))
+            conn.commit()
+
     aluno = dict(row)
     data_exp = parse_date(aluno["data_expiracao"])
-    
+
     if hoje > data_exp:
         return False, f"Seu período de acesso ao AnthropoGuide expirou em {data_exp.strftime('%d/%m/%Y')}. Entre em contato com o Prof. Filipe Brito para regularizar sua situação ou revalidação de acreditação.", aluno
 
