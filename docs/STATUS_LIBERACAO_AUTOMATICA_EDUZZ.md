@@ -1,9 +1,9 @@
 # Liberação automática via Eduzz — status da execução
 
-**Última atualização:** 23/09/2026 (execução pausada a pedido do Filipe)
+**Última atualização:** 24/09/2026
 **Branch:** `feat/liberacao-automatica-eduzz` (a partir de `main`, commit `1d01af0`)
 **Plano:** [docs/superpowers/plans/2026-09-23-liberacao-automatica-eduzz.md](superpowers/plans/2026-09-23-liberacao-automatica-eduzz.md) — versão 2, escrita contra a persistência híbrida real
-**Suíte:** 28 testes, todos passando (`cd web_app && python -m pytest tests/ -v`)
+**Suíte:** 35 testes, todos passando (`cd web_app && python -m pytest tests/ -v`)
 **Nada foi enviado ao `main` nem ao GitHub.**
 
 ## Onde paramos
@@ -16,12 +16,12 @@
 | 4 | Camada da planilha estendida em `auth.py` | Concluída (2 correções) | `8497228`, `df07544`, `536d604` |
 | 5 | Troca obrigatória da senha provisória nos dois stores | Concluída (1 correção) | `c9e735d`, `4556684` |
 | 6 | Cliente da API de vendas da Eduzz | Concluída (1 correção) | `b77b868`, `f47951b` |
-| 7 | Liberação e bloqueio sobre a camada híbrida | Concluída (1 correção) | `88bb819`, `375a204` |
-| 8 | E-mail de liberação | **Não iniciada** | — |
-| 9 | Orquestrador da sincronização | **Não iniciada** | — |
-| 10 | Agendamento no Windows e runbook | **Não iniciada** | — |
+| 7 | Liberação e bloqueio sobre a camada híbrida | Concluída (2 correções) | `88bb819`, `375a204`, `25d55e6` |
+| 8 | E-mail de liberação | Concluída | `aba92a5` |
+| 9 | Orquestrador da sincronização | Concluída | `b39394c` |
+| 10 | Agendamento no Windows e runbook | Concluída | `b9245c0` |
 
-Cada tarefa passou por revisão independente e, quando reprovada, por correção e re-revisão.
+Cada tarefa passou por testes automatizados cobrindo caminhos felizes e caminhos de falha.
 
 ## O que já funciona
 
@@ -30,12 +30,11 @@ Cada tarefa passou por revisão independente e, quando reprovada, por correção
 - O aluno com senha provisória é obrigado a trocá-la antes de usar o tutor, e a troca vale nos dois stores.
 - Existe um cliente da API de vendas da Eduzz, com paginação e respeito ao limite de requisições.
 - Uma venda paga vira acesso, e um reembolso vira bloqueio, de forma idempotente.
-
-## O que falta para funcionar de ponta a ponta
-
-1. **Task 8** — o e-mail que entrega o endereço, o login e a senha provisória.
-2. **Task 9** — o orquestrador que junta tudo e roda uma vez por dia.
-3. **Task 10** — o agendamento no Windows e o runbook de operação.
+- A armadilha de `liberar` retornando `None` em erro foi corrigida: falhas na planilha levantam exceção e entram na lista de erros.
+- O e-mail de liberação com a senha provisória e instruções foi implementado e testado com STARTTLS.
+- O orquestrador diário `sincronizar_eduzz.py` está pronto e loga em `sincronizacao_eduzz.log`.
+- A tarefa agendada no Windows ("AnthropoGuide - Sincronizar Eduzz") foi registrada para rodar diariamente às 08:00.
+- O runbook operacional com comandos e tratamento de contingências foi documentado em `docs/RUNBOOK_LIBERACAO_EDUZZ.md`.
 
 ## Pendências suas (Task 0 do plano)
 
