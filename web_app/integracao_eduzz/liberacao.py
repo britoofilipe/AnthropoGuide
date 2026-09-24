@@ -2,7 +2,6 @@
 Toda escrita passa por auth.py, que cuida da planilha e do fallback SQLite."""
 import datetime
 import secrets
-import sqlite3
 
 import auth
 
@@ -38,16 +37,13 @@ def liberar(venda: dict, prazo_dias: int):
     validade = compra + datetime.timedelta(days=prazo_dias)
     senha = gerar_senha_provisoria()
 
-    try:
-        ok, msg = auth.cadastrar_aluno(
-            nome, email, senha, "Eduzz", compra,
-            origem="eduzz", eduzz_sale_id=sale_id, precisa_trocar_senha=1,
-            data_expiracao=validade,
-        )
-    except sqlite3.IntegrityError:
-        return None
+    ok, msg = auth.cadastrar_aluno(
+        nome, email, senha, "Eduzz", compra,
+        origem="eduzz", eduzz_sale_id=sale_id, precisa_trocar_senha=1,
+        data_expiracao=validade,
+    )
     if not ok:
-        return None
+        raise RuntimeError(msg)
     return {"nome": nome, "email": email, "senha": senha, "validade": validade, "sale_id": sale_id}
 
 

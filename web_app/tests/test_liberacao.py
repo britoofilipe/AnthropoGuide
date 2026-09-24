@@ -75,6 +75,9 @@ def test_bloquear_quando_nao_existe_em_nenhum_lugar(tmp_path, monkeypatch):
     assert not liberacao.bloquear({"id": 9001, "status": "refunded"})
 
 
+import pytest
+
+
 def test_liberar_falha_se_gsheets_cadastrar_retorna_false(tmp_path, monkeypatch):
     monkeypatch.setattr(auth, "DB_PATH", tmp_path / "l3.db")
     monkeypatch.setattr(auth, "get_gsheets_url", lambda: "https://script.exemplo/exec")
@@ -82,8 +85,9 @@ def test_liberar_falha_se_gsheets_cadastrar_retorna_false(tmp_path, monkeypatch)
     monkeypatch.setattr(auth, "gsheets_cadastrar", lambda *a, **k: (False, "erro na planilha"))
     auth.init_db()
 
-    resultado = liberacao.liberar(VENDA, prazo_dias=120)
-    assert resultado is None
+    with pytest.raises(RuntimeError) as excinfo:
+        liberacao.liberar(VENDA, prazo_dias=120)
+    assert "erro na planilha" in str(excinfo.value)
 
     # SQLite deve estar vazio (nenhum aluno foi criado)
     with auth.get_db_connection() as conn:
