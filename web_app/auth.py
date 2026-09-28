@@ -86,7 +86,7 @@ def gsheets_listar() -> List[Dict[str, Any]]:
     if not url:
         return []
     
-    resp = requests.get(url, timeout=12, allow_redirects=True)
+    resp = requests.get(url, timeout=25, allow_redirects=True)
     if resp.status_code != 200:
         raise RuntimeError(f"Google Sheets retornou status {resp.status_code}")
         
@@ -169,7 +169,7 @@ def gsheets_cadastrar(nome: str, email: str, senha_hash: str, turma: str, data_c
         "precisa_trocar_senha": precisa_trocar_senha
     }
 
-    resp = requests.post(url, json=payload, timeout=12, allow_redirects=True)
+    resp = requests.post(url, json=payload, timeout=25, allow_redirects=True)
     if resp.status_code == 200:
         try:
             corpo = resp.json()
