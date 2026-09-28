@@ -89,46 +89,195 @@ Durante a prova prática (composta por 10 variáveis do perfil restrito avaliada
   - Outras medidas: $\le 2,5\%$
 
 ### 5.2 Na Tarefa Pós-Curso (Submissão dos 20 Perfis no ISAKMetry)
-Para a concessão final da certificação internacional de Nível 1, o aluno deve mensurar **20 sujeitos em duplicata** dentro do prazo improrrogável de **4 meses** (a contar da data do exame prático presencial):
+Para a concessão final da certificação internacional de Nível 1, o aluno deve mensurar **20 sujeitos em duplicata** dentro do prazo de **4 meses a contar da data do exame prático** (ver §5.3-I sobre perda de prazo):
 - **Tolerância formal exigida (Critérios ISAK):**
-  - Dobras cutâneas: $\%TEM \le 7,5\%$ (Recomendação de excelência do Prof. Filipe: $\le 5,0\%$)
-  - Outras medidas (básicas, perímetros e diâmetros): $\%TEM \le 1,5\%$ (Recomendação de excelência: $\le 1,0\%$)
+  - Dobras cutâneas: $\%TEM \le 7,5\%$
+  - Outras medidas (básicas, perímetros e diâmetros): $\%TEM \le 1,5\%$
 
-### 5.3 Guia Operacional do ISAKMetry (Tutoriais Oficiais ISAK Global)
-O **ISAKMetry** é o software oficial em nuvem da International Society for the Advancement of Kinanthropometry, acessível gratuitamente para alunos e profissionais com credenciamento ativo através do portal [www.isak.global](https://www.isak.global).
+> **Não apresentar $\le 5,0\%$ / $\le 1,0\%$ como meta do Nível 1** (ADR 008, §2.3). Esses são os
+> valores pós-curso dos Níveis 2, 3 e 4 (Handbook, Tabela 1). Citá-los ao aluno de N1 cria dois
+> números concorrentes num contexto operacional e induz a erro.
 
-#### A. Acesso e Localização do Curso
-1. O aluno acessa [www.isak.global](https://www.isak.global) e efetua login com as credenciais de membro criadas durante a inscrição no curso presencial.
-2. No painel principal ou menu superior, acessa a plataforma **ISAKMetry**.
-3. Navega até a seção **"Courses" / "Mis Cursos"** (Meus Cursos) e seleciona o curso de Nível 1 realizado sob coordenação do Prof. Filipe Brito (Instrutor Nível 3).
-4. Localiza o módulo de submissão: **"Sending 20 subjects" / "Envío de 20 sujetos"**.
+### 5.3 Guia Operacional do ISAKMetry (verificado nos tutoriais oficiais e na planilha oficial)
 
-#### B. Métodos de Alimentação de Dados (20 Sujeitos em Duplicata)
-Para cada um dos 20 voluntários, devem ser registradas as 21 variáveis do Perfil Restrito N1 em duas tomadas de medida independentes (Medida 1 e Medida 2):
-- **Método 1: Carga em Lote via Excel ("Measurements from Excel") — *Altamente Recomendado***:
-  - No menu do ISAKMetry, o aluno baixa a planilha padrão (*template* oficial em formato `.xlsx`).
-  - A planilha já possui os cabeçalhos devidamente codificados para identificação (ID/Nome, sexo, data de nascimento, data da avaliação) e duas colunas por variável (M1 e M2).
-  - O aluno preenche as 20 linhas sem alterar a estrutura de linhas, colunas ou cabeçalhos do arquivo.
-  - Retorna ao ISAKMetry e faz o upload em lote. O sistema faz o *parsing* instantâneo e valida todas as variáveis de uma única vez.
-- **Método 2: Cadastro Manual ("Create Subjects" & "Measurements")**:
-  - O aluno cadastra sujeito por sujeito no sistema ("Create Subject") com dados demográficos e vincula ao curso.
-  - Acessa o formulário de medição e digita manualmente as séries M1 e M2 variável por variável.
+O **ISAKMetry** é o software oficial em nuvem da International Society for the Advancement of
+Kinanthropometry, acessível gratuitamente para alunos e profissionais com credenciamento ativo
+através do portal [www.isak.global](https://www.isak.global).
 
-#### C. Auditoria Automática do %ETM e Envio ("Send to Instructor")
-- O motor de cálculo do ISAKMetry gera automaticamente o relatório consolidado de $\%ETM$ intra-avaliador para todas as variáveis dos 20 sujeitos.
-- Caso alguma variável ultrapasse o limite formal ($\le 7,5\%$ para dobras ou $\le 1,5\%$ para perímetros/diâmetros/básicas), o sistema sinaliza o erro. O aluno deve revisar suas anotações para certificar-se de que não houve erro de digitação antes de reenviar.
-- Estando todas as variáveis aprovadas dentro da tolerância, o aluno clica no botão oficial de submissão: **"Send to Instructor" / "Enviar al Instructor"**.
-- O status da submissão passa para **"Pending Review" (Pendente de Revisão)** e os dados ficam bloqueados para novas edições enquanto o instrutor avalia.
+> **Conteúdo corrigido em 28/09/2026 (ADR 008).** A versão anterior desta seção descrevia um fluxo
+> de envio por planilha em lote com 20 linhas e um botão "Send to Instructor". Nenhum dos dois
+> existe. O que segue foi verificado contra os quatro tutoriais oficiais, quadro a quadro, e
+> contra o arquivo da planilha oficial.
 
-#### D. Fluxo de Confirmação pelo Instrutor e Emissão do Certificado
-1. O Prof. Filipe Brito (Instrutor Nível 3) acessa o portal com credenciais de instrutor e visualiza a submissão do aluno na fila de auditoria do curso.
-2. O instrutor inspeciona o relatório analítico de $\%ETM$, a plausibilidade biológica das medidas e a consistência técnica dos dados.
-3. Se os dados atenderem a todos os requisitos, o instrutor clica em **"Confirm / Approve" (Aprovar 20 sujeitos)**. Caso haja anomalias técnicas ou de digitação, o instrutor pode rejeitar com apontamentos para retificação.
-4. Após a confirmação no sistema pelo instrutor, a validação é transmitida automaticamente à Secretaria Central da ISAK Global, que formaliza o credenciamento internacional de Nível 1 e disponibiliza o diploma digital oficial com o número de registro internacional do antropometrista.
+#### A. Distinção fundamental: lançar ≠ enviar
 
-#### E. Recursos Adicionais da Plataforma ISAKMetry
-- **Download de Medidas ("Downloading your measures")**: Permite ao profissional exportar todo o seu banco histórico de avaliados e medições em formato Excel/CSV para fins de pesquisa, auditoria ou backup.
-- **Gestão Clínica e Atendimentos ("Appointments" e "Reports")**: O ISAKMetry oferece suporte para agendamento de consultas e emissão de relatórios antropométricos completos pós-certificação (somatórios de dobras, fracionamento corporal e gráficos somatotipológicos de Heath-Carter).
+Duas operações diferentes, e confundi-las é a origem da maior parte das dúvidas dos alunos:
+
+- **Lançar** é colocar as medidas de um sujeito dentro do ISAKMetry. Pode ser digitando direto na
+  plataforma ou preenchendo a planilha oficial e subindo o arquivo.
+- **Enviar** é escolher, entre tudo que já foi lançado, quais 20 avaliações formam a tarefa
+  pós-curso, no menu **"Post-course"**. **Nenhuma planilha é enviada ao instrutor.**
+
+#### B. Cadastro do sujeito ("Create Subjects")
+
+Toda avaliação pertence a um sujeito cadastrado. Em **Subjects / Sujeitos → Add / Criar**.
+
+Blocos do formulário: Dados pessoais · Foto · Características · Histórico de massa corporal ·
+Dados de interesse · Grupos de usuários.
+
+**Campos obrigatórios (\*):** Nome, Sobrenome, Telefone, Sexo, Data de nascimento, Raça.
+
+Orientação útil ao aluno em tarefa pós-curso: registrar no campo "Motivo da avaliação" algo que
+identifique a tarefa (ex.: "Perfil pós-curso ISAK N1"), o que facilita localizar as avaliações na
+hora da seleção dos 20.
+
+> **Não orientar o preenchimento de "Grupos de usuários".** O tutorial oficial *Create Subjects* é
+> explícito: *"The field 'user group' should not be filled in, unless you want to share this
+> subject's values with another anthropometrist."* Para a tarefa pós-curso, o campo fica em branco.
+
+#### C. Caminho 1 — Medir direto na plataforma ("Subjects – Measurements")
+
+Assistente em três passos:
+
+1. **Escolher o perfil** a aplicar — para o N1, o **perfil restrito** — e clicar em
+   *Start / Empezar*.
+2. **"Take measures"**: tabela com as colunas **Tipo · Número · Medida antropométrica · 1ª medida ·
+   2ª medida · 3ª medida**, agrupada em Medidas básicas, Dobras, Perímetros e Diâmetros. A
+   instrução literal da plataforma é *inserir o valor de cada variável **na mesma ordem
+   estabelecida pelo ISAK** e, em seguida, realizar a segunda coleta das variáveis*. Botões
+   *Previous step / Next step*.
+3. **Salvar** para confirmar. A plataforma orienta usar *Previous step* para revisar os dados
+   carregados antes de confirmar, porque corrigir depois é mais trabalhoso.
+
+**A célula da 3ª medida é habilitada pelo próprio sistema** onde a diferença entre a 1ª e a 2ª
+medida exigir. Ver §5.4 sobre como orientar quanto a esse gatilho.
+
+#### D. Caminho 2 — Planilha oficial offline + upload
+
+A ISAK fornece um modelo de Excel (`.xltx`) do perfil restrito, exportado do próprio ISAKMetry.
+Funciona sem internet: preenche-se no laboratório e sobe-se o arquivo depois.
+
+- **Um único sujeito por arquivo** — 21 linhas de variáveis. Para os 20 perfis são **20 arquivos**.
+- **O aluno preenche apenas quatro coisas:** idioma, data da avaliação, coluna **1ª** e coluna
+  **2ª**. Todo o resto é calculado e está bloqueado.
+- **Idioma:** o aluno brasileiro escolhe **`Br`**. O código `Pt` é o português europeu e muda os
+  rótulos (em `Br`, a segunda variável lê "Estatura alongada"; em `Pt`, "Estatura").
+- **Coluna própria para a 3ª medida**, habilitada pela planilha quando necessário.
+- **Regras de digitação da própria planilha:** no máximo **1 casa decimal**; preencher até que
+  **todas as células fiquem verdes** — vermelho ou laranja indica pendência.
+- **Aba protegida** e coluna de tolerância travada: o aluno não consegue alterá-la.
+- **Cada aluno exporta a planilha do próprio login.** As tolerâncias embutidas são as do **nível de
+  acreditação de quem exportou**. Usar a cópia de um colega ou do instrutor significa trabalhar com
+  critério alheio.
+- Ordem das 21 variáveis, com os `MeasureItemId` oficiais: básicas 1–4 (massa corporal, estatura
+  alongada, estatura sentado, envergadura); dobras 5–12 (tríceps, subescapular, bíceps, crista
+  ilíaca, supraespinal, abdominal, coxa, perna); perímetros 15, 16, 20, 21, 23, 24 (braço relaxado,
+  braço fletido e contraído, cintura, quadril, coxa média, perna); diâmetros 40, 41, 42 (úmero,
+  biestiloide, fêmur).
+
+O upload é feito em **Subjects / Sujeitos**. Após importar, conferir: importação bem-sucedida não
+é sinônimo de importação correta.
+
+#### E. O envio dos 20 perfis ("Post-course")
+
+1. **Menu lateral → "Post-course" / "Post-curso"** — item de primeiro nível, ao lado de Home,
+   Profiles, Subjects, Account e Population.
+2. A tela **"Enviar trabalho pós-curso (20 medições)"** lista **todas as avaliações realizadas após
+   a data da prova do curso**, com **Sujeito · Medições · Identificador de medição**, o tipo de
+   perfil ("Restringido"), data e hora.
+3. O aluno **marca as caixas de seleção** das avaliações que quer enviar. **Pode ter medido mais de
+   20 e escolher as melhores** — estratégia recomendável, por proteger contra o sujeito que estourou
+   uma variável.
+4. O botão **"Enviar"** só fica ativo com **exatamente 20** selecionadas. Não é possível enviar em
+   partes.
+5. Diálogo de confirmação: *"Deseja enviar as medições ao seu instrutor?"*
+6. **A plataforma monta a proforma analítica** dos 20 perfis — valores, cálculos e %ETM variável a
+   variável — e a encaminha ao instrutor. O aluno não exporta nem anexa nada.
+
+#### F. Aprovação pelo instrutor e emissão do certificado
+
+O instrutor analisa a proforma analítica: %ETM variável a variável, plausibilidade biológica e
+consistência técnica. Aprova ou devolve com apontamentos para retificação.
+
+**Dois sinais automáticos de aprovação, ambos verificáveis pelo aluno:**
+
+1. Recebe **e-mail automático** com o link para baixar o certificado.
+2. **A aba "Post-course" desaparece do menu.** Se ela ainda está lá, o processo não fechou.
+
+#### G. Relatório para entregar ao avaliado ("Reports")
+
+Distinto da proforma do instrutor. Serve ao voluntário, e é argumento útil de recrutamento para
+quem precisa reunir 20 pessoas.
+
+Sujeitos → cartão do sujeito → **"Measures history"** → lista de avaliações (Perfil · Data ·
+Ações) → ícone de relatório → tela **"Gerar informe"**:
+
+| Campo | Função |
+|---|---|
+| Nome do relatório | Vem com um padrão (`ISAKMetry_Nome_Perfil_data`), editável |
+| Escolha uma medida com a qual comparar | Opcional — avaliação anterior do mesmo sujeito, para comparação longitudinal |
+| Escolha uma referência | Opcional — **precisa ter sido carregada antes**, em *Account / References* |
+
+O relatório é baixado **em formato Excel**. Pode ser gerado sem nenhuma comparação.
+
+#### H. Autoconferência do %ETM antes do envio
+
+O %ETM auditado é calculado **sobre as duplicatas** — 1ª e 2ª medida. A **terceira medida define o
+valor final daquele sujeito, mas não entra no cálculo do ETM**: o Handbook fala explicitamente do
+%ETM "das duplicatas".
+
+São 21 cálculos, um por variável, e nenhum pode ultrapassar 7,5% (dobras) ou 1,5% (demais).
+
+**Orientação operacional ao aluno:** conferir **a cada 5 sujeitos**, não no 20º. As medidas podem
+ser exportadas por **"Download your measures"**, que baixa toda a base histórica em Excel/CSV.
+Com 5 ou 10 sujeitos o número ainda oscila — vale como alerta precoce, para identificar a variável
+sistematicamente fora. O motivo é prático: quando a plataforma consolidar o %ETM dos 20, corrigir
+não é redigitar, é **recoletar**.
+
+Nunca orientar ajuste de valores para "fechar" o %ETM. O instrutor recebe o relatório analítico
+completo, e dispersão pequena demais para ser real é detectável. Isso é fraude de dados e
+compromete a acreditação, não apenas a submissão.
+
+#### I. Perda do prazo de 4 meses
+
+O prazo é de **4 meses a contar da data da prova prática** — não do fim do curso. A certificação
+vale 4 anos e 4 meses, contados da mesma data.
+
+Vencido o prazo, o instrutor encerra o curso no sistema. Quem não entregou recebe e-mail
+informando que **não passou** e fica como **membro não acreditado por quatro anos**.
+
+**Existe uma segunda chance** (Handbook, p. 57):
+
+| Aspecto | Regra |
+|---|---|
+| O quê | Refazer a **prova prática**; aprovado, recebe **novo prazo** para os 20 perfis |
+| Quando | Até **um mês contado do encerramento do curso** — não da data da prova |
+| Onde | **Qualquer curso ISAK, com qualquer instrutor** (p. 58–59) |
+| Custo | **Sem nova taxa ISAK.** O examinador pode cobrar custos adicionais (modelos, locação) |
+| Vagas | Não ocupa vaga na relação máxima aluno/instrutor |
+| Se falhar de novo | Na prova **ou** na entrega: matrícula no **curso completo**, como aluno novo |
+
+**A ISAK não prevê janela de 12 meses para esta situação.** Os 12 meses no Handbook referem-se a
+contextos não relacionados (p. 29, *Designated Level 3*; p. 32, renomeação a Level 4).
+
+Recomendação do Handbook ao instrutor (p. 57): lembrar os alunos **um mês antes** do vencimento e
+acompanhar individualmente quem não entregou. Ao aluno que percebe que não vai conseguir, a
+orientação é **falar com o instrutor antes do vencimento**, e não esperar para usar a segunda
+chance — que custa refazer a prova e recoletar 20 perfis.
+
+### 5.4 Regra de comunicação sobre o gatilho da 3ª medida no pós-curso
+
+**Não citar valor numérico.** A planilha é gerada com a tolerância do nível de acreditação de quem
+a exportou, e não foi possível determinar se a plataforma faz o mesmo ajuste. Orientar que **a
+planilha ou o próprio ISAKMetry sempre indicam** quando a terceira medida é necessária — a
+tolerância já vem embutida na ferramenta, e o aluno não precisa conhecê-la nem calculá-la.
+
+O que cabe ao aluno é **não ignorar o aviso** e estar em condições de atendê-lo: com o avaliado
+ainda presente e as marcações ainda no lugar. Daí a orientação de digitar as duas rodadas antes de
+liberar o voluntário.
+
+**Permanece explícito** o **critério de aprovação** do %ETM ($\le 7,5\%$ dobras, $\le 1,5\%$
+demais), que é outra grandeza e que o aluno precisa conhecer.
 
 ---
 

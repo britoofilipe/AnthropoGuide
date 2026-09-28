@@ -8,6 +8,7 @@ Regras de Acesso do Prof. Filipe Brito:
 """
 
 import os
+import re
 import sqlite3
 import hashlib
 import hmac
@@ -74,8 +75,27 @@ def parse_date(val: Any) -> datetime.date:
     """Converte strings ISO, timestamps do Google Sheets ou objetos date para datetime.date."""
     if isinstance(val, datetime.date):
         return val
-    s = str(val).split("T")[0].strip()
-    return datetime.date.fromisoformat(s)
+    s = str(val).strip()
+    if not s:
+        return datetime.date.today()
+    s_clean = s.split("(")[0].strip()
+    iso_match = re.search(r"(\d{4})-(\d{2})-(\d{2})", s_clean)
+    if iso_match:
+        return datetime.date(int(iso_match.group(1)), int(iso_match.group(2)), int(iso_match.group(3)))
+    meses = {
+        "Jan": 1, "Feb": 2, "Mar": 3, "Apr": 4, "May": 5, "Jun": 6,
+        "Jul": 7, "Aug": 8, "Sep": 9, "Oct": 10, "Nov": 11, "Dec": 12
+    }
+    js_match = re.search(r"([A-Za-z]{3})\s+(\d{1,2})\s+(\d{4})", s_clean)
+    if js_match:
+        m_str, d_str, y_str = js_match.group(1), js_match.group(2), js_match.group(3)
+        if m_str in meses:
+            return datetime.date(int(y_str), meses[m_str], int(d_str))
+    try:
+        return datetime.date.fromisoformat(s_clean.split("T")[0])
+    except Exception:
+        return datetime.date.today()
+
 
 # ==========================================
 # CAMADA GOOGLE SHEETS (PERSISTÊNCIA PERMANENTE)

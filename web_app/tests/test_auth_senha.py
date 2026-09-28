@@ -22,6 +22,7 @@ def test_verificar_acesso_migra_hash_legado_na_mesma_conexao(tmp_path, monkeypat
     """Testa regravação de hash legado dentro de verificar_acesso."""
     db = tmp_path / "teste.db"
     monkeypatch.setattr(auth, "DB_PATH", db)
+    monkeypatch.setattr(auth, "get_gsheets_url", lambda: None)
     auth.init_db()
 
     email = "teste@example.com"
@@ -70,6 +71,7 @@ def test_conferir_senha_trata_hash_malformado(tmp_path, monkeypatch):
     """Testa que hash malformado não lança exceção, apenas retorna False."""
     db = tmp_path / "teste.db"
     monkeypatch.setattr(auth, "DB_PATH", db)
+    monkeypatch.setattr(auth, "get_gsheets_url", lambda: None)
     auth.init_db()
 
     email = "teste@example.com"
