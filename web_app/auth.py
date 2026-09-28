@@ -188,7 +188,7 @@ def gsheets_trocar_senha(email: str, senha_hash: str) -> Tuple[bool, str]:
         return False, "URL do Google Sheets não configurada."
     resp = requests.post(
         url, json={"action": "trocar_senha", "email": email, "senha_hash": senha_hash},
-        timeout=12, allow_redirects=True,
+        timeout=30, allow_redirects=True,
     )
     if resp.status_code == 200:
         try:
@@ -209,7 +209,7 @@ def gsheets_bloquear(eduzz_sale_id: int) -> Tuple[bool, str]:
         return False, "URL do Google Sheets não configurada."
     resp = requests.post(
         url, json={"action": "bloquear", "eduzz_sale_id": eduzz_sale_id},
-        timeout=12, allow_redirects=True,
+        timeout=30, allow_redirects=True,
     )
     if resp.status_code == 200:
         try:
@@ -234,7 +234,7 @@ def gsheets_homologar(email: str, nova_expiracao: datetime.date) -> Tuple[bool, 
         "nova_expiracao": nova_expiracao.isoformat()
     }
 
-    resp = requests.post(url, json=payload, timeout=12, allow_redirects=True)
+    resp = requests.post(url, json=payload, timeout=30, allow_redirects=True)
     if resp.status_code == 200:
         return True, f"Acreditação homologada na planilha! Acesso estendido por +4 anos (até {nova_expiracao.strftime('%d/%m/%Y')})."
     return False, f"Falha ao homologar no Google Sheets: {resp.text}"

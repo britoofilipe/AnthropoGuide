@@ -1,4 +1,4 @@
-"""Script de liberação em lote dos alunos do curso ISAK Nível 1."""
+"""Script para atualizar senhas e reenviar e-mails de acesso com o novo link ia.filipebrito.com.br."""
 import datetime
 import os
 import sys
@@ -6,7 +6,6 @@ import time
 from pathlib import Path
 from dotenv import load_dotenv
 
-# Garante saída UTF-8 no Windows
 if sys.platform == "win32":
     try:
         sys.stdout.reconfigure(encoding="utf-8")
@@ -36,15 +35,15 @@ ALUNOS = [
     {"nome": "Vivian Maria Ferreira de Freitas", "email": "vivianfreitasff@gmail.com"},
 ]
 
-TURMA = "ISAK N1 Fortaleza - Setembro 2026"
-DATA_CURSO = datetime.date(2026, 9, 27)
+JA_ENVIADOS = {
+    "cahsribeironutricao@gmail.com",
+    "nogueiradanoliver@gmail.com",
+}
+
 VALIDADE = datetime.date(2027, 9, 28)
-ORIGEM = "bonus_curso"
 
 
 def executar():
-    auth.init_db()
-
     url_plataforma = os.environ.get("URL_PLATAFORMA", "https://ia.filipebrito.com.br")
     email_remetente = os.environ.get("EMAIL_REMETENTE", "AnthropoGuide <sizelab.academy@gmail.com>")
     smtp_host = os.environ["SMTP_HOST"]
@@ -55,72 +54,67 @@ def executar():
     sucessos = []
     erros = []
 
-    # Lista alunos já cadastrados para evitar duplicidade
-    existentes = {a["email"].strip().lower() for a in auth.listar_alunos()}
-
-    print(f"Iniciando liberação e envio para {len(ALUNOS)} alunos...")
+    print(f"Iniciando atualização de credenciais e reenvio para {len(ALUNOS)} alunos...")
+    print(f"Endereço oficial: {url_plataforma}")
     print("=" * 60)
 
     for i, a in enumerate(ALUNOS, 1):
         nome = a["nome"].strip()
         email = a["email"].strip().lower()
 
-        print(f"[{i}/{len(ALUNOS)}] Processando: {nome} <{email}>...")
-
-        # Se já existe (caso do aluno 1 que já foi processado na primeira tentativa)
-        if email in existentes:
-            print(f"   [AVISO] Aluno ja cadastrado anteriormente. Pulando.")
-            sucessos.append({"aluno": nome, "email": email, "status": "ja_cadastrado"})
+        if email in JA_ENVIADOS:
+            print(f"[{i}/{len(ALUNOS)}] {nome} <{email}>: Ja enviado na rodada anterior. Pulando.")
+            sucessos.append({"aluno": nome, "email": email, "status": "ja_enviado"})
             continue
 
-        senha_provisoria = liberacao.gerar_senha_provisoria()
+        nova_senha = liberacao.gerar_senha_provisoria()
+        print(f"[{i}/{len(ALUNOS)}] Atualizando e reenviando: {nome} <{email}>...")
 
-        # 1. Cadastra no sistema (Planilha + SQLite)
-        ok, msg = auth.cadastrar_aluno(
-            nome=nome,
-            email=email,
-            senha=senha_provisoria,
-            turma=TURMA,
-            data_curso=DATA_CURSO,
-            origem=ORIGEM,
-            precisa_trocar_senha=1,
-            data_expiracao=VALIDADE,
-        )
+        # 1. Atualiza senha com até 2 tentativas
+        ok = False
+        msg = ""
+        for tentativa in range(1, 3):
+            ok, msg = auth.trocar_senha(email, nova_senha)
+            if ok:
+                break
+            print(f"   [RETRY] Tentativa {tentativa} falhou ({msg}). Aguardando 3s...")
+            time.sleep(3)
 
         if not ok:
-            print(f"   [ERRO] Falha ao cadastrar: {msg}")
-            erros.append({"aluno": nome, "email": email, "motivo": f"Cadastro: {msg}"})
+            print(f"   [ERRO] Falha definitiva ao atualizar senha: {msg}")
+            erros.append({"aluno": nome, "email": email, "motivo": f"Troca de senha: {msg}"})
             continue
+
+        # Marca flag precisa_trocar_senha no SQLite
+        try:
+            with auth.get_db_connection() as conn:
+                conn.execute("UPDATE alunos SET precisa_trocar_senha = 1 WHERE email = ?", (email,))
+                conn.commit()
+        except Exception:
+            pass
 
         # 2. Monta e envia o e-mail
         dados_email = {
             "nome": nome,
             "email": email,
-            "senha": senha_provisoria,
+            "senha": nova_senha,
             "validade": VALIDADE.strftime("%d/%m/%Y"),
         }
 
         try:
             mensagem = email_envio.montar(dados_email, url_plataforma, email_remetente)
             email_envio.enviar(mensagem, smtp_host, smtp_port, smtp_usuario, smtp_senha)
-            print(f"   [SUCESSO] Cadastrado e e-mail enviado com sucesso!")
+            print(f"   [SUCESSO] Senha atualizada e e-mail enviado com {url_plataforma}!")
             sucessos.append({"aluno": nome, "email": email, "status": "enviado"})
         except Exception as e:
-            print(f"   [AVISO] Cadastrado no sistema, mas erro no envio do e-mail: {e}")
-            erros.append({"aluno": nome, "email": email, "motivo": f"Envio de e-mail: {e}"})
+            print(f"   [AVISO] Senha alterada, mas falhou ao enviar e-mail: {e}")
+            erros.append({"aluno": nome, "email": email, "motivo": f"Envio: {e}"})
 
-        # Pausa para respeitar taxa do servidor e da planilha
-        time.sleep(2.5)
+        # Pausa de 3.0s para respeitar limites do Google
+        time.sleep(3.0)
 
     print("=" * 60)
-    print(f"Processamento concluído: {len(sucessos)} processados com sucesso, {len(erros)} erros.")
-    for s in sucessos:
-        print(f" - {s['aluno']} ({s['email']}): {s.get('status')}")
-    if erros:
-        print("Erros:")
-        for err in erros:
-            print(f" - {err['aluno']} ({err['email']}): {err['motivo']}")
-
+    print(f"Processamento concluído: {len(sucessos)} sucessos, {len(erros)} erros.")
     return len(erros) == 0
 
 
