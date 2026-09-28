@@ -67,9 +67,9 @@ Material educacional independente, de minha autoria, sem vínculo institucional 
 
 ACESSO
 
-Após a compra, você recebe por e-mail os dados de acesso individual, com validade de [INSERIR PRAZO] a contar da liberação. O acesso é pessoal e intransferível.
+Após a compra, você recebe por e-mail os dados de acesso individual, com validade de 1 ano a contar da liberação. O acesso é pessoal e intransferível.
 
-Suporte: [INSERIR E-MAIL DE SUPORTE]
+Suporte: sizelab.academy@gmail.com
 ```
 
 > **Nota de conformidade ISAK (Handbook 2026):** a descrição cita a ISAK apenas em dois pontos — a padronização internacional que embasa a técnica e a credencial pessoal do autor (Nível 3). Não promete acreditação, não se apresenta como curso ISAK (que exige autorização prévia da ISAK Secretariat) e declara a ausência de vínculo institucional. O produto também não reproduz nem entrega o Manual ISAK, que é publicação própria da ISAK (Esparza-Ros, Vaquero-Cristóbal & Marfell-Jones, 2019) e é liberado ao aluno pelo instrutor dentro do sistema ISAK.
@@ -104,7 +104,7 @@ Posso gerar essa arte se você quiser.
 ## 5. E-mail de suporte
 
 ```
-[INSERIR] — sugestão: suporte@filipebrito.com.br ou contato@filipebrito.com.br
+sizelab.academy@gmail.com
 ```
 
 Esse e-mail fica visível ao comprador, então convém ser um endereço institucional, não o pessoal.
