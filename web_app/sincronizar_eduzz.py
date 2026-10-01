@@ -28,14 +28,20 @@ def sincronizar(config: dict, enviar_email) -> dict:
         config["token"], config["product_id"], inicio, hoje, "paid"
     ):
         try:
+            buyer_nome = venda.get("buyer", {}).get("name", "Sem Nome")
+            buyer_email = venda.get("buyer", {}).get("email", "Sem Email")
+            print(f"Processando venda {venda.get('id')} - {buyer_nome} <{buyer_email}>...")
             novo = liberacao.liberar(venda, config["prazo_dias"])
             if novo is None:
+                print(f"  Venda {venda.get('id')} já havia sido processada anteriormente.")
                 continue
             enviar_email({**novo, "validade": novo["validade"].strftime("%d/%m/%Y")})
             resultado["liberados"] += 1
+            print(f"  [SUCESSO] Acesso liberado e e-mail enviado para {buyer_email}!")
             logging.info("Acesso liberado para a venda %s", venda.get("id"))
         except Exception as erro:
             resultado["erros"].append(f"venda {venda.get('id')}: {erro}")
+            print(f"  [ERRO] Falha ao liberar venda {venda.get('id')}: {erro}")
             logging.exception("Falha ao liberar a venda %s", venda.get("id"))
 
     for status in ("refunded", "canceled"):
