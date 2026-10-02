@@ -8,7 +8,7 @@ Este documento orienta a operação, monitoramento e recuperação de falhas do 
 
 A sincronização é executada pelo script `web_app/sincronizar_eduzz.py`.
 
-* **Frequência padrão:** Diariamente, às 08:00 (horário de Brasília).
+* **Frequência padrão:** 3 vezes ao dia, às **06:00**, **14:00** e **22:00** (horário de Brasília).
 * **Janela de busca:** Últimos 3 dias (configurável via `EDUZZ_DIAS_JANELA` no `.env`), garantindo resiliência caso o computador esteja desligado em algum dia.
 * **O que processa:**
   1. Vendas com status `paid` (Paga): Cria o aluno com senha provisória, validade calculada (`compra + PRAZO_ACESSO_DIAS`), registra na planilha Google (fonte da verdade) e no SQLite (espelho), e envia e-mail com as credenciais.
@@ -44,10 +44,15 @@ O terminal exibirá o resumo da execução no final:
 
 ## 4. Agendamento de Tarefa no Windows
 
-Para criar ou recriar a tarefa agendada no Agendador de Tarefas do Windows (`schtasks`), abra o Prompt de Comando (`cmd.exe`) ou PowerShell e execute:
+Para configurar ou recriar os 3 gatilhos diários no Agendador de Tarefas do Windows, abra o PowerShell e execute:
 
-```cmd
-schtasks /Create /TN "AnthropoGuide - Sincronizar Eduzz" /TR "cmd /c cd /d D:\ISAK_Filipe_Instrutor\AnthropoGuide\web_app && python sincronizar_eduzz.py >> sincronizacao_eduzz.log 2>&1" /SC DAILY /ST 08:00 /RL LIMITED /F
+```powershell
+$triggers = @(
+    (New-ScheduledTaskTrigger -Daily -At "06:00"),
+    (New-ScheduledTaskTrigger -Daily -At "14:00"),
+    (New-ScheduledTaskTrigger -Daily -At "22:00")
+)
+Set-ScheduledTask -TaskName "AnthropoGuide - Sincronizar Eduzz" -Trigger $triggers
 ```
 
 Para verificar se a tarefa está agendada:
