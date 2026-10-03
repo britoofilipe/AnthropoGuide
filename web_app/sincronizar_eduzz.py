@@ -11,12 +11,19 @@ import auth
 from integracao_eduzz import eduzz_api, email_envio, liberacao
 
 BASE = Path(__file__).resolve().parent
-logging.basicConfig(
-    filename=BASE / "sincronizacao_eduzz.log",
-    level=logging.INFO,
-    encoding="utf-8",
-    format="%(asctime)s %(levelname)s %(message)s",
-)
+try:
+    logging.basicConfig(
+        filename=BASE / "sincronizacao_eduzz.log",
+        level=logging.INFO,
+        encoding="utf-8",
+        format="%(asctime)s %(levelname)s %(message)s",
+    )
+except Exception as e:
+    logging.basicConfig(
+        level=logging.INFO,
+        format="%(asctime)s %(levelname)s %(message)s",
+    )
+    logging.warning("Nao foi possivel abrir sincronizacao_eduzz.log: %s", e)
 
 
 def sincronizar(config: dict, enviar_email) -> dict:
