@@ -113,9 +113,9 @@ Esse e-mail fica visível ao comprador, então convém ser um endereço instituc
 
 ## 6. Formas de cobrança
 
-- **Tipo de cobrança:** `Única`, se o acesso for por prazo fechado (o modelo atual da plataforma: 4 meses no pós-curso, estendidos após a acreditação). Se a ideia for renovação automática, o caminho na Eduzz é um produto de assinatura, e aí o controle de validade no app precisa acompanhar a recorrência.
+- **Tipo de cobrança:** `Única`. **Prazo de acesso vendido: 12 meses** (definido em 30/09/2026). O controle de validade no app precisa acompanhar esse prazo.
 - **Moeda:** BRL (Real Brasileiro).
-- **Preço:** `[DEFINIR]`.
+- **Preço:** **R$ 197,00** (definido em 30/09/2026). Ofertas adicionais para a campanha de lançamento do curso de dobras: R$ 1,97 · R$ 49,25 (75% off) · R$ 98,50 (50% off) — ver `Curso_Dobras/Marketing/CAMPANHA_LANCAMENTO_EDUZZ.md`.
 
 ### Nome exibido na fatura de cartão (máx. 10 caracteres)
 
@@ -178,7 +178,7 @@ Pode pular. O conteúdo da base de conhecimento é de autoria própria. Atençã
 
 ## Pendências antes de publicar
 
-1. **Preço** e **prazo de acesso** vendido.
+1. ~~Preço e prazo de acesso vendido~~ — resolvidos em 30/09/2026: **R$ 197,00** e **12 meses**.
 2. **Público:** hoje o cadastro de aluno é feito por você no painel. Vendendo na Eduzz para o público aberto, é preciso definir o fluxo de liberação (manual, como está no texto de entrega, ou automatizado por webhook da Eduzz).
 3. **E-mail de suporte** institucional.
 4. **Arte** do produto.
