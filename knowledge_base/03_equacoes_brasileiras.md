@@ -36,19 +36,21 @@ $$\%G = \left( \frac{4,95}{D_b} - 4,50 \right) \times 100$$
 
 ### 2.2 Mulheres (18 a 51 anos)
 
-#### Versão Oficial Recomendada para Alunos ISAK N1 (4 Dobras Padronizadas):
-- **Variáveis:** Tríceps (TR), Subescapular (SE), Crista Ilíaca/Suprailíaca (SI) e Perna (PE) em milímetros ($mm$); Idade em anos.
+#### Versão com as 4 Dobras do Perfil Restrito ISAK — equação F9 (Petroski, 1995, Tab. 4)
+- **Variáveis:** Subescapular (SE), Tríceps (TR), Supra-ilíaca (SI) e Perna (PE) em milímetros ($mm$); Idade (ID) em anos; Massa corporal (MC) em kg; Estatura (ES) em cm.
 - **Fórmula da Densidade Corporal ($D_b$ em $g/cm^3$):**
 
-$$D_b = 1,12948287 - 0,00072714 \times (\sum 4D) + 0,00000188 \times (\sum 4D)^2 - 0,00044733 \times (\text{Idade})$$
+$$D_b = 1,02902361 - 0,00067159 \times (\sum 4D) + 0,00000242 \times (\sum 4D)^2 - 0,00026073 \times (\text{ID}) - 0,00056009 \times (\text{MC}) + 0,00054649 \times (\text{ES})$$
 
 Onde:
-$$\sum 4D = \text{TR} + \text{SE} + \text{SI} + \text{PE}$$
+$$\sum 4D = \text{SE} + \text{TR} + \text{SI} + \text{PE}$$
 
 - **Conversão para % Gordura (%G):** Equação de Siri (1956):
 $$\%G = \left( \frac{4,95}{D_b} - 4,50 \right) \times 100$$
-- **Parâmetros psicométricos originais:** $R = 0,84$; $R^2 = 0,70$; $EPE \approx 0,0084\text{ g/cm}^3$ ($\approx 3,7\%G$).
-- **Por que esta versão é a indicada no curso ISAK N1:** Esta equação utiliza **exatamente as mesmas 4 dobras da equação masculina de Petroski**, as quais são 100% padronizadas no Perfil Restrito N1 da ISAK. Dessa forma, o antropometrista credenciado não precisa medir dobras fora do seu escopo para obter uma estimativa com excelente validação para mulheres brasileiras.
+- **Parâmetros originais:** $R = 0,848$; $R^2 = 0,719$; $EPE = 0,0068\text{ g/ml}$. Mulheres de 18 a 51 anos.
+- **Atenção:** a F9 exige **massa corporal e estatura**, além da idade. Sem esses dados, não aplicar.
+- **Por que esta versão:** usa as mesmas 4 dobras da equação masculina (M7), todas do Perfil Restrito ISAK. O próprio Petroski a recomenda no resumo da tese, pela praticidade para grandes grupos.
+- **Correção (ADR 009, 12/11/2026):** a versão anterior desta seção trazia `1,12948287 − 0,00072714 Σ4 + 0,00000188 Σ4² − 0,00044733 ID`, que **não existe na tese** e produzia valores implausíveis (~10 %G).
 
 #### Contexto e Desmistificação da Versão com Axilar Média:
 - Em sua tese de doutorado (UFSM, 1995), Petroski testou e propôs 16 equações para cada sexo.
@@ -59,24 +61,24 @@ $$\%G = \left( \frac{4,95}{D_b} - 4,50 \right) \times 100$$
 
 ---
 
-## 3. Equações de Guedes (1985, 1994)
+## 3. Equações de Guedes & Guedes (1991)
 
-Desenvolvidas por Dartagnan Pinto Guedes na Universidade de São Paulo (USP) / Universidade Estadual de Londrina (UEL), específicas para jovens adultos brasileiros (17 a 30 anos), utilizando pesagem hidrostática como critério de referência.
+GUEDES, D. P.; GUEDES, J. E. R. P. Proposição de equações para predição da quantidade de gordura corporal em adultos jovens. *Semina*, 12(2), p. 61–70, 1991. Universidade Estadual de Londrina. Amostra de 205 adultos jovens (110 homens, 96 mulheres) de 18 a 30 anos, com pesagem hidrostática como referência e adipômetro Harpenden. O artigo de Guedes (1985, *Kinesis*) é descritivo e não traz estas equações.
 
-### 3.1 Homens Jovens (17 a 30 anos) — 3 Dobras
+### 3.1 Homens Jovens (18 a 30 anos) — 3 Dobras (eq. III)
 - **Variáveis:** Tríceps (TR), Suprailíaca (SI) e Abdominal (AB) em milímetros ($mm$).
 - **Fórmula de Densidade Corporal ($D_b$):**
 
-$$D_b = 1,1714 - 0,0671 \times \log_{10}(\text{TR} + \text{SI} + \text{AB})$$
+$$D_b = 1,17136 - 0,06706 \times \log_{10}(\text{TR} + \text{SI} + \text{AB})$$
 
 - **Conversão para % Gordura:** Siri (1956).
 - **Vantagem no N1:** Todas as três dobras (tríceps, crista ilíaca/supraespinal e abdominal) fazem parte do perfil restrito ISAK N1.
 
-### 3.2 Mulheres Jovens (17 a 30 anos) — 3 Dobras
+### 3.2 Mulheres Jovens (18 a 30 anos) — 3 Dobras (eq. XI)
 - **Variáveis:** Coxa Medial (CX), Suprailíaca (SI) e Subescapular (SE) em milímetros ($mm$).
 - **Fórmula de Densidade Corporal ($D_b$):**
 
-$$D_b = 1,1665 - 0,0706 \times \log_{10}(\text{CX} + \text{SI} + \text{SE})$$
+$$D_b = 1,16650 - 0,07063 \times \log_{10}(\text{CX} + \text{SI} + \text{SE})$$
 
 - **Conversão para % Gordura:** Siri (1956).
 - **Vantagem no N1:** Todas as três dobras fazem parte do perfil restrito ISAK N1.

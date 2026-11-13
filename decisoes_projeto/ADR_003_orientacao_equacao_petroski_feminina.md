@@ -1,7 +1,7 @@
 # ADR 003 — Orientação e Validação da Equação de Petroski Feminina (4 Dobras ISAK)
 
 **Data:** 19/09/2026  
-**Status:** Aprovado e Implementado  
+**Status:** Parcialmente revogado pelo ADR 009 (12/11/2026): a equação do item 2.1 não existe na tese; usar a F9. A diretriz de não contraindicar Petroski para mulheres continua válida.  
 **Decisores:** Prof. Filipe Brito (Instrutor Internacional ISAK Nível 3) e Antigravity AI  
 
 ---

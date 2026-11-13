@@ -32,8 +32,8 @@
 
 5. **Petroski, E. L. (1995).** *Desenvolvimento e validação de equações generalizadas para a estimativa da densidade corporal em adultos*. Tese (Doutorado em Educação Física) — Universidade Federal de Santa Maria, Santa Maria, 1995.
    - *Escopo:* Fórmulas de densidade corporal para homens (18-66 anos) e mulheres (18-51 anos) brasileiros validadas por pesagem hidrostática.
-6. **Guedes, D. P. (1985).** *Estudo da gordura corporal através da mensuração dos valores de densidade corporal e da espessura de dobras cutâneas em universitários*. Dissertação (Mestrado em Educação Física) — Universidade de São Paulo, São Paulo, 1985.
-   - *Escopo:* Equações com 3 dobras cutâneas para homens e mulheres jovens brasileiros.
+6. **Guedes, D. P., & Guedes, J. E. R. P. (1991).** *Proposição de equações para predição da quantidade de gordura corporal em adultos jovens*. Semina, 12(2), 61-70.
+   - *Escopo:* Equações com 3 dobras cutâneas para homens (eq. III) e mulheres (eq. XI) jovens brasileiros, 18–30 anos, referência hidrostática. (Corrigido no ADR 009: a dissertação de 1985 é descritiva.)
 7. **Cyrino, E. S., Okano, A. H., Glaner, M. F., Romanzini, M., Gobbo, L. A., Makowics, R. N., et al. (2003).** *Impacto da utilização de diferentes equações antropométricas para a estimativa da gordura corporal em indivíduos brasileiros*. Revista Brasileira de Cineantropometria & Desempenho Humano, 5(1), 21-33.
    - *Escopo:* Demonstração da subestimativa de gordura pelas fórmulas de Jackson & Pollock na população brasileira.
 8. **Pitanga, F. J. G., & Lessa, I. (2005).** *Sensibilidade e especificidade do índice de conicidade como marcador de risco coronariano em adultos em Salvador, Brasil*. Revista Brasileira de Epidemiologia, 8(2), 171-177.
@@ -45,8 +45,8 @@
 
 ## 4. Atletas, Rendimento Esportivo e Somatotipo
 
-10. **Withers, R. T., Craig, N. P., Bourdon, P. C., & Norton, K. I. (1987).** *Relative body fat and anthropometric prediction of body density of male and female athletes*. European Journal of Applied Physiology and Occupational Physiology, 56(2), 169-180. DOI: 10.1007/BF00690895.
-    - *Escopo:* Equações de densidade corporal para atletas do sexo masculino e feminino, com variáveis anatômicas alinhadas ao protocolo ISAK.
+10. **Withers, R. T., Whittingham, N. O., Norton, K. I., La Forgia, J., Ellis, M. W., & Crockett, A. (1987).** *Relative body fat and anthropometric prediction of body density of female athletes*. European Journal of Applied Physiology and Occupational Physiology, 56(2), 169-180.
+    - *Escopo:* Equações de densidade corporal para atletas do sexo **feminino** (Tab. 5). A equação masculina (Withers, Craig, Bourdon & Norton, 1987, artigo próprio) ainda não foi conferida. (Corrigido no ADR 009.)
 11. **Carter, J. E. L., & Heath, B. H. (1990).** *Somatotyping - Development and Applications*. Cambridge: Cambridge University Press. ISBN: 978-0521351171.
     - *Escopo:* Fórmulas clássicas do somatotipo antropométrico, coordenadas da somatocarta e 13 categorias somatotípicas.
 12. **Faulkner, J. A. (1968).** *Physiology of swimming and diving*. In: Falls, H. (Ed.), Exercise Physiology. Baltimore: Academic Press, pp. 415-446.

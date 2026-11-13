@@ -25,19 +25,23 @@ A literatura cineantropométrica internacional contemporânea (ISAK, Stewart, Ac
 
 Quando houver demanda institucional ou do atleta por uma estimativa de densidade e %G, o antropometrista deve selecionar equações derivadas especificamente de populações atléticas, explicitando sempre o erro padrão da estimativa ($EPE$).
 
-### 2.1 Withers et al. (1987) — Atletas de Rendimento
-Desenvolvidas na Austrália em atletas de elite de ambos os sexos, validadas contra pesagem hidrostática. É uma das referências mais compatíveis com a padronização anatômica ISAK.
+### 2.1 Withers et al. (1987) — Atletas Australianas
+WITHERS, R. T. et al. Relative body fat and anthropometric prediction of body density of female athletes. *Eur J Appl Physiol*, 56, p. 169–180, 1987. Atletas da seleção estadual da Austrália do Sul (n = 182), pesagem hidrostática como referência, sítios e técnica compatíveis com a padronização ISAK.
 
-#### A. Homens Atletas:
-- **Fórmula (6 Dobras ISAK):**
-$$D_b = 1,17484 - 0,07229 \times \log_{10}(\text{Tríceps} + \text{Subescapular} + \text{Bíceps} + \text{Supraespinal} + \text{Abdominal} + \text{Coxa} + \text{Perna})$$
-*(Nota: a soma utiliza 7 dobras ou a variante de 6 dobras sem o bíceps; manter a consistência da soma).*
+#### A. Mulheres atletas — amostra geral (n = 182), BD(2):
+$$D_b = 1,17830 - 0,07179 \times \log_{10}(\text{Tríceps} + \text{Subescapular} + \text{Supraespinal} + \text{Perna})$$
+- $R = 0,863$; $EPE = 0,00597\text{ g/cm}^3$ (2,7 %G).
 - **Conversão:** Siri (1956).
 
-#### B. Mulheres Atletas:
-- **Fórmula:**
-$$D_b = 1,17280 - 0,07408 \times \log_{10}(\text{Tríceps} + \text{Subescapular} + \text{Supraespinal} + \text{Perna})$$
+#### B. Mulheres atletas de esportes coletivos (n = 107), BD(4):
+$$D_b = 1,17484 - 0,07229 \times \log_{10}(\text{Tríceps} + \text{Subescapular} + \text{Supraespinal} + \text{Perna})$$
+- $R = 0,881$; $EPE = 0,00555\text{ g/cm}^3$ (2,5 %G).
 - **Conversão:** Siri (1956).
+
+#### C. Homens atletas
+A equação masculina de Withers (artigo próprio, 1987) **não foi conferida no original**. Não usar até a conferência.
+
+> **Correção (ADR 009, 12/11/2026):** a versão anterior desta seção trazia `1,17280 − 0,07408 log Σ4` para mulheres (coeficientes que não constam do artigo) e apresentava `1,17484 − 0,07229 log` como equação **masculina** de 7 dobras. É a BD(4) **feminina**, de 4 dobras.
 
 ---
 
